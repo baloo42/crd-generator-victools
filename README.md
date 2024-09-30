@@ -25,3 +25,15 @@ victools/json-schema-generator instead of jackson/json-schema-generator.
   Tests to compare different implementations. (The same as upstream)
 - `test`  
   Tests for features which are not (yet) supported in upstream.
+
+
+## Differences
+
+_compared to fabric8/kubernetes-client CRD-Generator v2_
+
+- No support for `@SchemaSwap`/`@SchemaFrom`
+- Support for `@AdditionalPrinterColumn`
+- Support for `@MapType`
+- Support for `@ExternalDocs`
+- Support for Jakarta Validations Annotations (not yet fully tested)
+- Support for Swagger 2 Annotations (not yet fully tested)
