@@ -37,3 +37,14 @@ _compared to fabric8/kubernetes-client CRD-Generator v2_
 - Support for `@ExternalDocs`
 - Support for Jakarta Validations Annotations (not yet fully tested)
 - Support for Swagger 2 Annotations (not yet fully tested)
+
+
+## SPI
+
+This CRD-Generator implementation can be extended with _CRD-Generator Schema Modules_.
+A module must implement the `CRDGeneratorSchemaModule` interface which allows to hook into the victools
+schema-generator configuration. Victools modules can't be used directly, because they allow too much to modify.
+
+The CRD-Generator loads modules via ServiceLoader to implement autoconfiguration.
+This requires modules to include a file `META-INF/services/io.fabric8.crd.generator.victools.spi.CRDGeneratorSchemaModule`
+with the fully qualified class name of the module implementation.
