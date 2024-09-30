@@ -1,0 +1,3 @@
+# Use sdkman to run "sdk env" to initialize with correct JDK version or use auto_env:
+# https://sdkman.io/usage#config
+java=17.0.10-tem
