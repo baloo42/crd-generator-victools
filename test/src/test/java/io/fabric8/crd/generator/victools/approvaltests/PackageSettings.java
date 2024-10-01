@@ -15,10 +15,6 @@
  */
 package io.fabric8.crd.generator.victools.approvaltests;
 
-import org.approvaltests.core.ApprovalFailureReporter;
-import org.approvaltests.reporters.DiffReporter;
-import org.approvaltests.reporters.QuietReporter;
-
 /**
  * @see <a href=
  *      "https://github.com/approvals/ApprovalTests.Java/blob/master/approvaltests/docs/explanations/BestConfigurationPractices.md">

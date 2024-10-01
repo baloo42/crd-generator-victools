@@ -30,12 +30,12 @@ class PathAwareSchemaPropsVisitor {
   private final List<PropertyVisitor> propertyVisitors = new LinkedList<>();
   private final List<IdentifiedPropertyVisitor> identifiedPropertyVisitors = new LinkedList<>();
 
-  public PathAwareSchemaPropsVisitor withPropertyVisitor(PropertyVisitor visitors){
+  public PathAwareSchemaPropsVisitor withPropertyVisitor(PropertyVisitor visitors) {
     this.propertyVisitors.add(visitors);
     return this;
   }
 
-  public PathAwareSchemaPropsVisitor withIdentifiedPropertyVisitor(IdentifiedPropertyVisitor visitors){
+  public PathAwareSchemaPropsVisitor withIdentifiedPropertyVisitor(IdentifiedPropertyVisitor visitors) {
     this.identifiedPropertyVisitors.add(visitors);
     return this;
   }
@@ -45,8 +45,8 @@ class PathAwareSchemaPropsVisitor {
   }
 
   private void visit(String parentPath, JSONSchemaPropsBuilder schema) {
-    if("object".equals(schema.getType())) {
-      for(var prop : schema.getProperties().entrySet()) {
+    if ("object".equals(schema.getType())) {
+      for (var prop : schema.getProperties().entrySet()) {
         var fieldPath = parentPath + "." + prop.getKey();
         var fieldSchema = prop.getValue();
         visitField(fieldPath, fieldSchema);
@@ -55,7 +55,7 @@ class PathAwareSchemaPropsVisitor {
     }
   }
 
-  private void visitField(String path, JSONSchemaProps schema){
+  private void visitField(String path, JSONSchemaProps schema) {
     onFieldProperty(path, schema);
     ofNullable(schema.getId())
         .ifPresent(id -> onIdentifiedFieldProperty(id, path, schema));
@@ -65,7 +65,7 @@ class PathAwareSchemaPropsVisitor {
     propertyVisitors.forEach(v -> v.visit(path, schema));
   }
 
-  private void onIdentifiedFieldProperty(String id, String path, JSONSchemaProps schema){
+  private void onIdentifiedFieldProperty(String id, String path, JSONSchemaProps schema) {
     // remove id, not required anymore
     schema.setId(null);
     // execute registered visitors

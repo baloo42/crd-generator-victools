@@ -15,7 +15,6 @@
  */
 package io.fabric8.crd.generator.victools;
 
-
 import java.io.File;
 import java.net.URI;
 import java.util.HashMap;

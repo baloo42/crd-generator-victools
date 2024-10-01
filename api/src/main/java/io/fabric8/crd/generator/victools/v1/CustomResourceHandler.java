@@ -15,7 +15,6 @@
  */
 package io.fabric8.crd.generator.victools.v1;
 
-
 import com.github.victools.jsonschema.generator.SchemaGenerator;
 import io.fabric8.crd.generator.victools.AbstractCustomResourceHandler;
 import io.fabric8.crd.generator.victools.CRDGeneratorContextInternal;
@@ -53,8 +52,7 @@ import static java.util.Optional.ofNullable;
 @Slf4j
 class CustomResourceHandler extends AbstractCustomResourceHandler {
 
-  private final Queue<Entry<CustomResourceDefinition, Set<String>>> crds =
-      new ConcurrentLinkedQueue<>();
+  private final Queue<Entry<CustomResourceDefinition, Set<String>>> crds = new ConcurrentLinkedQueue<>();
 
   @Override
   public void handle(

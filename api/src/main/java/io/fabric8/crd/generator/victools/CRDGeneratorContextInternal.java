@@ -8,5 +8,6 @@ import io.fabric8.kubernetes.client.utils.KubernetesSerialization;
  */
 public interface CRDGeneratorContextInternal extends CRDGeneratorContext {
   KubernetesSerialization getKubernetesSerialization();
+
   boolean isEnabled(CRDGeneratorSchemaOption option);
 }

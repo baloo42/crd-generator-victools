@@ -70,7 +70,6 @@ public @interface AdditionalPrinterColumn {
     }
   }
 
-
   @Retention(RetentionPolicy.RUNTIME)
   @Target(ElementType.TYPE)
   @interface List {

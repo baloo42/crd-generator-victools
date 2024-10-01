@@ -16,8 +16,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Set;
 
-import static io.fabric8.crd.generator.victools.spi.KubernetesSchemaKeyword.KUBERNETES_PRESERVE_UNKNOWN_FIELDS;
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotationConsideringFieldAndGetter;
+import static io.fabric8.crd.generator.victools.spi.KubernetesSchemaKeyword.KUBERNETES_PRESERVE_UNKNOWN_FIELDS;
 
 public class PreserveUnknownFieldsModule extends AbstractCRDGeneratorModule {
 
@@ -66,7 +66,7 @@ public class PreserveUnknownFieldsModule extends AbstractCRDGeneratorModule {
 
     var beanDescription = getContext().introspect(scope.getType().getErasedType());
     return beanDescription.findAnyGetter() != null
-           || beanDescription.findAnySetterAccessor() != null;
+        || beanDescription.findAnySetterAccessor() != null;
   }
 
   @RequiredArgsConstructor

@@ -20,8 +20,7 @@ public class EmbeddedResourceModule extends AbstractCRDGeneratorModule {
   private static final Set<Class<?>> IMPLICIT_CLASSES = Set.of(
       RawExtension.class,
       GenericKubernetesResource.class,
-      HasMetadata.class
-  );
+      HasMetadata.class);
 
   public EmbeddedResourceModule(CRDGeneratorContextInternal context) {
     super(context);

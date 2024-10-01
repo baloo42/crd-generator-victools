@@ -1,6 +1,5 @@
 package io.fabric8.crd.generator.victools.schema;
 
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGenerationContext;
@@ -25,7 +24,7 @@ public class ExplicitNullableModule implements Module {
     reduceTypeArray(attributes, schemaGenerationContext);
   }
 
-  private void reduceTypeArray(ObjectNode attributes,  SchemaGenerationContext ctx) {
+  private void reduceTypeArray(ObjectNode attributes, SchemaGenerationContext ctx) {
     var type = attributes.get(ctx.getKeyword(SchemaKeyword.TAG_TYPE));
     if (type != null && type.isArray()) {
       String typeString = ctx.getKeyword(SchemaKeyword.TAG_TYPE_OBJECT);
@@ -40,7 +39,7 @@ public class ExplicitNullableModule implements Module {
         }
       }
       attributes.put(ctx.getKeyword(SchemaKeyword.TAG_TYPE), typeString);
-      if(isNullable) {
+      if (isNullable) {
         attributes.put(KubernetesSchemaKeyword.NULLABLE.getValue(), true);
       }
     }

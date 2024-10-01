@@ -15,7 +15,6 @@
  */
 package io.fabric8.crd.generator.victools.cli;
 
-import io.fabric8.crd.generator.victools.cli.LoggingConfiguration;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

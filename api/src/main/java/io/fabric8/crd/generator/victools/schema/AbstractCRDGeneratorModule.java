@@ -6,7 +6,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-
 @RequiredArgsConstructor
 @Getter(AccessLevel.PROTECTED)
 public abstract class AbstractCRDGeneratorModule implements Module {

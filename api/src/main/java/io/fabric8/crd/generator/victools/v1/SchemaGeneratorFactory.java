@@ -41,8 +41,7 @@ class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
       Option.NONPUBLIC_NONSTATIC_FIELDS_WITH_GETTERS,
       Option.NONPUBLIC_NONSTATIC_FIELDS_WITHOUT_GETTERS,
       Option.ALLOF_CLEANUP_AT_THE_END,
-      Option.DUPLICATE_MEMBER_ATTRIBUTE_CLEANUP_AT_THE_END
-  );
+      Option.DUPLICATE_MEMBER_ATTRIBUTE_CLEANUP_AT_THE_END);
 
   @Override
   public OptionPreset getDefaultOptionPreset() {
@@ -68,13 +67,13 @@ class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
           });
     }
 
-    if(context.isEnabled(CRDGeneratorSchemaOption.JAKARTA_VALIDATION)) {
+    if (context.isEnabled(CRDGeneratorSchemaOption.JAKARTA_VALIDATION)) {
       // fails intentional to load if required dependencies are not in classpath
       // could be improved to fail with a better error message
       builder.with(new JakartaValidationModule());
     }
 
-    if(context.isEnabled(CRDGeneratorSchemaOption.SWAGGER_2)) {
+    if (context.isEnabled(CRDGeneratorSchemaOption.SWAGGER_2)) {
       // fails intentional to load if required dependencies are not in classpath
       // could be improved to fail with a better error message
       builder.with(new Swagger2Module());

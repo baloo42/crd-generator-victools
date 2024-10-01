@@ -15,8 +15,6 @@
  */
 package io.fabric8.crd.generator.victools.cli;
 
-import io.fabric8.crd.generator.victools.cli.SourceParameter;
-import io.fabric8.crd.generator.victools.cli.SourceParameterTypeConverter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 

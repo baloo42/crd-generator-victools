@@ -24,7 +24,6 @@ public class ExternalDocsModule implements Module {
     builder.forTypesInGeneral().withTypeAttributeOverride(this::overrideTypeAttributes);
   }
 
-
   private void overrideTypeAttributes(
       ObjectNode attributes,
       TypeScope scope,
@@ -43,7 +42,7 @@ public class ExternalDocsModule implements Module {
 
   private void processExternalDocsAnnotation(
       ObjectNode attributes,
-      Supplier<Optional<ExternalDocs>> supplier){
+      Supplier<Optional<ExternalDocs>> supplier) {
 
     supplier.get()
         .map(ExternalDocsInfo::from)
@@ -76,7 +75,7 @@ public class ExternalDocsModule implements Module {
       return Optional.ofNullable(url);
     }
 
-    static ExternalDocsInfo from(ExternalDocs annotation){
+    static ExternalDocsInfo from(ExternalDocs annotation) {
       return new ExternalDocsInfo(
           emptyToNull(annotation.description()),
           emptyToNull(annotation.url()));

@@ -57,7 +57,7 @@ public class Fabric8EnumModule implements Module {
     /**
      * Look-up the given enum type's constant values.
      *
-     * @param enumType             targeted enum type
+     * @param enumType targeted enum type
      * @return collection containing constant enum values
      */
     private List<String> extractEnumValues(
@@ -75,9 +75,9 @@ public class Fabric8EnumModule implements Module {
           .toList();
     }
 
-    private String getEnumValue(Field field){
+    private String getEnumValue(Field field) {
       var jsonPropertyAnnotation = field.getAnnotation(JsonProperty.class);
-      if(jsonPropertyAnnotation != null) {
+      if (jsonPropertyAnnotation != null) {
         return jsonPropertyAnnotation.value();
       } else {
         return field.getName();

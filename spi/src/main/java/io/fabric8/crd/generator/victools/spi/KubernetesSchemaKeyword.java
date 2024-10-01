@@ -13,7 +13,7 @@ public enum KubernetesSchemaKeyword {
 
   private final String value;
 
-  KubernetesSchemaKeyword(String value){
+  KubernetesSchemaKeyword(String value) {
     this.value = value;
   }
 

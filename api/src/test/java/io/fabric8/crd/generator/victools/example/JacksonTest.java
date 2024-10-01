@@ -1,14 +1,11 @@
 package io.fabric8.crd.generator.victools.example;
 
-
 import io.fabric8.kubernetes.api.model.apiextensions.v1.JSONSchemaProps;
 import io.fabric8.kubernetes.client.utils.KubernetesSerialization;
-import org.junit.jupiter.api.Test;
 
 public class JacksonTest {
 
-
-  void test(){
+  void test() {
     var json = """
         {
           "type": "object",

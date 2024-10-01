@@ -15,7 +15,6 @@
  */
 package io.fabric8.crd.generator.victools.maven.plugin;
 
-import io.fabric8.crd.generator.victools.maven.plugin.ClasspathType;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Build;
 import org.apache.maven.project.MavenProject;

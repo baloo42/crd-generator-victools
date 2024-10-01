@@ -70,7 +70,7 @@ public class MetadataModule implements Module {
             isIdRequired.set(true);
           });
 
-      if(isIdRequired.get()){
+      if (isIdRequired.get()) {
         attributes.put("id", id);
       }
     });

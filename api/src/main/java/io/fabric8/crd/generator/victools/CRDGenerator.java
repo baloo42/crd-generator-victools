@@ -73,12 +73,12 @@ public class CRDGenerator {
     return this;
   }
 
-  public CRDGenerator withOption(CRDGeneratorSchemaOption option){
+  public CRDGenerator withOption(CRDGeneratorSchemaOption option) {
     enabledOptions.add(option);
     return this;
   }
 
-  public CRDGenerator withoutOption(CRDGeneratorSchemaOption option){
+  public CRDGenerator withoutOption(CRDGeneratorSchemaOption option) {
     enabledOptions.remove(option);
     return this;
   }
@@ -133,10 +133,10 @@ public class CRDGenerator {
     return this;
   }
 
-  public CRDGenerator forCRDVersions(CRDVersion... versions){
-    if(versions != null) {
-      for(CRDVersion version : versions){
-        if(version != null) {
+  public CRDGenerator forCRDVersions(CRDVersion... versions) {
+    if (versions != null) {
+      for (CRDVersion version : versions) {
+        if (version != null) {
           targetCRDVersions.add(version);
         }
       }
@@ -188,7 +188,7 @@ public class CRDGenerator {
     return this.infos == null ? Collections.emptySet() : new HashSet<>(infos.values());
   }
 
-  private CRDGeneratorContextInternal createContext(){
+  private CRDGeneratorContextInternal createContext() {
     return CRDGeneratorContextImpl.builder()
         .objectMapper(objectMapper)
         .kubernetesSerialization(kubernetesSerialization)
@@ -197,7 +197,7 @@ public class CRDGenerator {
   }
 
   private Map<CRDVersion, AbstractCRDVersionHandler> createHandlers(
-      CRDGeneratorContextInternal context){
+      CRDGeneratorContextInternal context) {
     return targetCRDVersions.stream()
         .collect(Collectors.toMap(v -> v, v -> switch (v) {
           case V1 -> new CRDv1Handler(context);

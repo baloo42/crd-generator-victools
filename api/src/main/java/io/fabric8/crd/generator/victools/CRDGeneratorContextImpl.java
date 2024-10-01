@@ -16,7 +16,6 @@
 
 package io.fabric8.crd.generator.victools;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.fabric8.crd.generator.victools.spi.CRDGeneratorContext;
 import io.fabric8.kubernetes.client.utils.KubernetesSerialization;

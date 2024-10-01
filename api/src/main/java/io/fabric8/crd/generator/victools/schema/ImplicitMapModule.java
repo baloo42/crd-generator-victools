@@ -9,11 +9,9 @@ import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.TypeScope;
 import com.github.victools.jsonschema.generator.impl.module.AdditionalPropertiesModule;
 import io.fabric8.crd.generator.victools.CRDGeneratorContextInternal;
-import io.fabric8.crd.generator.victools.spi.CRDGeneratorContext;
 
 import java.lang.reflect.Type;
 import java.util.Map;
-
 
 /**
  * Module to support Maps with a value type of Object or undefined.

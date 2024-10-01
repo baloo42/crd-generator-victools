@@ -66,7 +66,7 @@ class CRDGeneratorVictoolsApprovalTest {
 
     assertThat(result)
         .withFailMessage(() -> "Could not find expected CRD " + expectedCrd
-                               + " in results. Found instead: " + result.keySet())
+            + " in results. Found instead: " + result.keySet())
         .containsKey(expectedCrd)
         .extractingByKey(expectedCrd)
         .isNotNull();

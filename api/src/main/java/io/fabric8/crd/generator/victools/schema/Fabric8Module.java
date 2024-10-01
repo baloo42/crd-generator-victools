@@ -65,7 +65,7 @@ public class Fabric8Module extends AbstractCRDGeneratorModule {
   }
 
   public Integer resolveStringMaxLength(MemberScope<?, ?> member) {
-    if(member.getType().getErasedType().equals(String.class)) {
+    if (member.getType().getErasedType().equals(String.class)) {
       return findAnnotationConsideringFieldAndGetter(member, Max.class)
           .map(ann -> (int) ann.value())
           .orElse(null);
@@ -74,7 +74,7 @@ public class Fabric8Module extends AbstractCRDGeneratorModule {
   }
 
   public Integer resolveStringMinLength(MemberScope<?, ?> member) {
-    if(member.getType().getErasedType().equals(String.class)) {
+    if (member.getType().getErasedType().equals(String.class)) {
       return findAnnotationConsideringFieldAndGetter(member, Min.class)
           .map(ann -> (int) ann.value())
           .orElse(null);

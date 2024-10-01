@@ -18,8 +18,7 @@ class ScaleSubresourceCollector
 
   private final CustomResourceContext customResourceContext;
 
-  private final CustomResourceSubresourceScaleBuilder builder
-      = new CustomResourceSubresourceScaleBuilder();
+  private final CustomResourceSubresourceScaleBuilder builder = new CustomResourceSubresourceScaleBuilder();
 
   @Override
   public void visit(String id, String path, JSONSchemaProps schema) {
@@ -35,9 +34,9 @@ class ScaleSubresourceCollector
   }
 
   public Optional<CustomResourceSubresourceScale> findScaleSubresource() {
-    if(builder.hasSpecReplicasPath()
-       || builder.hasStatusReplicasPath()
-       || builder.hasLabelSelectorPath()) {
+    if (builder.hasSpecReplicasPath()
+        || builder.hasStatusReplicasPath()
+        || builder.hasLabelSelectorPath()) {
 
       return Optional.of(builder.build());
     }

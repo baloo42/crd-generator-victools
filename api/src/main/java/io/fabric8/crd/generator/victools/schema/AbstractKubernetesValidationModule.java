@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.victools.jsonschema.generator.FieldScope;
 import com.github.victools.jsonschema.generator.MemberScope;
 import com.github.victools.jsonschema.generator.MethodScope;
-import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGenerationContext;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import io.fabric8.crd.generator.victools.AnnotationUtils;
@@ -20,8 +19,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static io.fabric8.crd.generator.victools.spi.KubernetesSchemaKeyword.KUBERNETES_VALIDATIONS;
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findRepeatingAnnotations;
+import static io.fabric8.crd.generator.victools.spi.KubernetesSchemaKeyword.KUBERNETES_VALIDATIONS;
 
 @Slf4j
 public abstract class AbstractKubernetesValidationModule<A extends Annotation, C extends Annotation>
@@ -53,9 +52,10 @@ public abstract class AbstractKubernetesValidationModule<A extends Annotation, C
     builder.withAnnotationInclusionOverride(annotationClass, AnnotationInclusion.INCLUDE_AND_INHERIT);
     builder.withAnnotationInclusionOverride(annotationContainerClass, AnnotationInclusion.INCLUDE_AND_INHERIT);
   }
+
   private void overrideInstanceAttributes(
       ObjectNode attributes,
-      MemberScope<?,?> member,
+      MemberScope<?, ?> member,
       SchemaGenerationContext context) {
 
     var annotationsOnClass = findValidationRulesOnClassLevel(member.getType());
@@ -69,17 +69,17 @@ public abstract class AbstractKubernetesValidationModule<A extends Annotation, C
     mergeValidationRules(attributes, annotations);
   }
 
-  private List<A> findValidationRulesOnField(MemberScope<?,?> member){
-    if(member.isFakeContainerItemScope()) {
+  private List<A> findValidationRulesOnField(MemberScope<?, ?> member) {
+    if (member.isFakeContainerItemScope()) {
       return Collections.emptyList();
     }
-    if(member instanceof FieldScope) {
+    if (member instanceof FieldScope) {
       return findRepeatingAnnotations(member,
           annotationClass, annotationContainerClass, annotationsFromContainerFunction);
     }
-    if(member instanceof MethodScope methodScope) {
+    if (member instanceof MethodScope methodScope) {
       var field = methodScope.findGetterField();
-      if(field != null) {
+      if (field != null) {
         return findRepeatingAnnotations(field,
             annotationClass, annotationContainerClass, annotationsFromContainerFunction);
       }
@@ -87,18 +87,18 @@ public abstract class AbstractKubernetesValidationModule<A extends Annotation, C
     return Collections.emptyList();
   }
 
-  private List<A> findValidationRulesOnGetter(MemberScope<?,?> member){
-    if(member.isFakeContainerItemScope()) {
+  private List<A> findValidationRulesOnGetter(MemberScope<?, ?> member) {
+    if (member.isFakeContainerItemScope()) {
       return Collections.emptyList();
     }
-    if(member instanceof FieldScope fieldScope) {
+    if (member instanceof FieldScope fieldScope) {
       var getter = fieldScope.findGetter();
-      if(getter != null) {
+      if (getter != null) {
         return findRepeatingAnnotations(getter,
             annotationClass, annotationContainerClass, annotationsFromContainerFunction);
       }
     }
-    if(member instanceof MethodScope) {
+    if (member instanceof MethodScope) {
       return findRepeatingAnnotations(member,
           annotationClass, annotationContainerClass, annotationsFromContainerFunction);
     }
@@ -106,7 +106,7 @@ public abstract class AbstractKubernetesValidationModule<A extends Annotation, C
   }
 
   private List<A> findValidationRulesOnClassLevel(ResolvedType type) {
-    if(type.getErasedType().getPackageName().startsWith("java.lang")) {
+    if (type.getErasedType().getPackageName().startsWith("java.lang")) {
       return Collections.emptyList();
     }
     return AnnotationUtils.findRepeatingAnnotations(type.getErasedType(), annotationClass);

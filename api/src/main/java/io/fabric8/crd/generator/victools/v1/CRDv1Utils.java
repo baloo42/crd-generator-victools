@@ -24,7 +24,7 @@ class CRDv1Utils {
         .build();
   }
 
-  static CustomResourceColumnDefinition createColumnDefinition(AdditionalPrinterColumn annotation){
+  static CustomResourceColumnDefinition createColumnDefinition(AdditionalPrinterColumn annotation) {
     return new CustomResourceColumnDefinitionBuilder()
         .withName(annotation.name())
         .withJsonPath(annotation.jsonPath())

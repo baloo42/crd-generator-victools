@@ -121,8 +121,7 @@ public class CustomResourceInfo {
 
       final String[] shortNames = CustomResource.getShortNames(customResource);
 
-      final Scope scope =
-          Utils.isResourceNamespaced(customResource) ? Scope.NAMESPACED : Scope.CLUSTER;
+      final Scope scope = Utils.isResourceNamespaced(customResource) ? Scope.NAMESPACED : Scope.CLUSTER;
 
       SpecAndStatus specAndStatus = SpecAndStatus.resolveSpecAndStatusTypes(customResource);
       if (specAndStatus.isUnreliable()) {
@@ -166,8 +165,7 @@ public class CustomResourceInfo {
           .annotations(instance.getMetadata().getAnnotations())
           .labels(instance.getMetadata().getLabels())
           .build();
-    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
-        InvocationTargetException e) {
+    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
       throw KubernetesClientException.launderThrowable(e);
     }
   }

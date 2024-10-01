@@ -25,7 +25,6 @@ import io.fabric8.generator.annotation.Nullable;
 import io.fabric8.generator.annotation.Pattern;
 import io.fabric8.generator.annotation.Required;
 import io.fabric8.generator.annotation.ValidationRule;
-import io.fabric8.kubernetes.api.model.IntOrString;
 import lombok.Data;
 
 @Data

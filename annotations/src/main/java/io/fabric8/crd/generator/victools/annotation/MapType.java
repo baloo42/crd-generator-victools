@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * </p>
  */
 @Inherited
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MapType {
 
@@ -36,6 +36,5 @@ public @interface MapType {
      */
     ATOMIC
   }
-
 
 }

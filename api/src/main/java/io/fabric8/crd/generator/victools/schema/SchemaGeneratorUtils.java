@@ -2,7 +2,6 @@ package io.fabric8.crd.generator.victools.schema;
 
 import com.github.victools.jsonschema.generator.MemberScope;
 import com.github.victools.jsonschema.generator.TypeScope;
-import io.fabric8.crd.generator.victools.annotation.ExternalDocs;
 import lombok.experimental.UtilityClass;
 
 import java.lang.annotation.Annotation;
@@ -47,14 +46,13 @@ public class SchemaGeneratorUtils {
 
   public static <A extends Annotation> Optional<A> findAnnotation(
       TypeScope scope,
-      Class<A> clazz
-  ){
+      Class<A> clazz) {
     return Optional.ofNullable(scope.getType().getErasedType().getAnnotation(clazz));
   }
 
   public static <A extends Annotation> List<A> findRepeatingAnnotations(
       TypeScope typeScope,
-      Class<A> clazz){
+      Class<A> clazz) {
 
     return List.of(typeScope.getType().getErasedType().getAnnotationsByType(clazz));
   }

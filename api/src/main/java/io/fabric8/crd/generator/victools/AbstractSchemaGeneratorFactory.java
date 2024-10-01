@@ -17,6 +17,7 @@ import static java.util.Optional.ofNullable;
 public abstract class AbstractSchemaGeneratorFactory {
 
   protected abstract OptionPreset getDefaultOptionPreset();
+
   private List<CRDGeneratorSchemaModule> modules;
 
   protected List<CRDGeneratorSchemaModule> getModules() {

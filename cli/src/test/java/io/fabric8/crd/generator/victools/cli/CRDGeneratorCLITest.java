@@ -15,8 +15,6 @@
  */
 package io.fabric8.crd.generator.victools.cli;
 
-import io.fabric8.crd.generator.victools.cli.CRDGeneratorCLI;
-import io.fabric8.crd.generator.victools.cli.CRDGeneratorExitCode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;

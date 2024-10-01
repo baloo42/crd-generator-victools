@@ -8,14 +8,9 @@ import lombok.Data;
 @Data
 public class SubTypeSpec {
 
-
   private Animal animal;
 
-
-  @JsonTypeInfo(
-      use = JsonTypeInfo.Id.NAME,
-      include = JsonTypeInfo.As.PROPERTY,
-      property = "animalType")
+  @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "animalType")
   @JsonSubTypes({
       @JsonSubTypes.Type(value = Dog.class, name = "dog"),
       @JsonSubTypes.Type(value = Cat.class, name = "cat")
@@ -24,12 +19,10 @@ public class SubTypeSpec {
     public String name;
   }
 
-
   @JsonTypeName("dog")
   public static class Dog extends Animal {
     public double barkVolume;
   }
-
 
   @JsonTypeName("cat")
   public static class Cat extends Animal {

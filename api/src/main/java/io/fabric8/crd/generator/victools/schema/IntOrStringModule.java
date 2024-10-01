@@ -8,7 +8,6 @@ import com.github.victools.jsonschema.generator.SchemaGenerationContext;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaKeyword;
 import io.fabric8.crd.generator.victools.CRDGeneratorContextInternal;
-import io.fabric8.crd.generator.victools.spi.CRDGeneratorContext;
 import io.fabric8.kubernetes.api.model.IntOrString;
 import io.fabric8.kubernetes.api.model.Quantity;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +21,7 @@ public class IntOrStringModule extends AbstractCRDGeneratorModule {
 
   private static final Set<Class<?>> IMPLICIT_CLASSES = Set.of(
       IntOrString.class,
-      Quantity.class
-  );
+      Quantity.class);
 
   public IntOrStringModule(CRDGeneratorContextInternal context) {
     super(context);
@@ -47,7 +45,7 @@ public class IntOrStringModule extends AbstractCRDGeneratorModule {
         ResolvedType javaType,
         SchemaGenerationContext context) {
 
-      if(!classes.contains(javaType.getErasedType())) {
+      if (!classes.contains(javaType.getErasedType())) {
         return null;
       }
 

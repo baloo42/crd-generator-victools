@@ -21,7 +21,7 @@ public class ExternalDocSpec {
   private ClassWithExternalDocs classWithExternalDocs;
 
   @ExternalDocs(description = "A description on a class")
-  static class ClassWithExternalDocs{
+  static class ClassWithExternalDocs {
   }
 
 }
