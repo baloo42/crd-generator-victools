@@ -11,6 +11,7 @@ import io.fabric8.crd.generator.victools.AbstractSchemaGeneratorFactory;
 import io.fabric8.crd.generator.victools.CRDGeneratorContextInternal;
 import io.fabric8.crd.generator.victools.CRDGeneratorSchemaOption;
 import io.fabric8.crd.generator.victools.CustomResourceContext;
+import io.fabric8.crd.generator.victools.schema.ConstToEnumInAllOfModule;
 import io.fabric8.crd.generator.victools.schema.EmbeddedResourceModule;
 import io.fabric8.crd.generator.victools.schema.ExplicitNullableModule;
 import io.fabric8.crd.generator.victools.schema.ExternalDocsModule;
@@ -21,7 +22,9 @@ import io.fabric8.crd.generator.victools.schema.IntOrStringModule;
 import io.fabric8.crd.generator.victools.schema.KubernetesMapTypeModule;
 import io.fabric8.crd.generator.victools.schema.MetadataModule;
 import io.fabric8.crd.generator.victools.schema.PreserveUnknownFieldsModule;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
 
   private static final OptionPreset DEFAULT_OPTIONS = new OptionPreset(
@@ -88,6 +91,7 @@ class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
         .with(new IntOrStringModule(context))
         .with(new KubernetesMapTypeModule())
         .with(new MetadataModule(customResourceContext))
-        .with(new ExplicitNullableModule());
+        .with(new ExplicitNullableModule())
+        .with(new ConstToEnumInAllOfModule());
   }
 }

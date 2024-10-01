@@ -19,6 +19,7 @@ import com.spun.util.tests.TestUtils;
 import io.fabric8.crd.generator.victools.approvaltests.externaldocs.ExternalDoc;
 import io.fabric8.crd.generator.victools.approvaltests.k8svalidation.K8sValidation;
 import io.fabric8.crd.generator.victools.approvaltests.maptype.MapType;
+import io.fabric8.crd.generator.victools.approvaltests.subtype.SubType;
 import io.fabric8.kubernetes.client.CustomResource;
 import org.approvaltests.Approvals;
 import org.approvaltests.namer.StackTraceNamer;
@@ -86,6 +87,7 @@ class CRDGeneratorVictoolsApprovalTest {
       cases.add(new TestCase("k8svalidations.samples.fabric8.io", crdVersion, parallel, K8sValidation.class));
       cases.add(new TestCase("externaldocs.samples.fabric8.io", crdVersion, parallel, ExternalDoc.class));
       cases.add(new TestCase("maptypes.samples.fabric8.io", crdVersion, parallel, MapType.class));
+      cases.add(new TestCase("subtypes.samples.fabric8.io", crdVersion, parallel, SubType.class));
     }
     return cases.stream();
   }
