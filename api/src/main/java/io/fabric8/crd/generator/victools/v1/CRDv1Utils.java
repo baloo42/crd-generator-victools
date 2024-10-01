@@ -8,6 +8,7 @@ import io.fabric8.kubernetes.api.model.apiextensions.v1.ValidationRuleBuilder;
 import lombok.experimental.UtilityClass;
 
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.emptyToNull;
+import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.zeroToNull;
 
 @UtilityClass
 class CRDv1Utils {
@@ -26,9 +27,9 @@ class CRDv1Utils {
 
   static CustomResourceColumnDefinition createColumnDefinition(AdditionalPrinterColumn annotation) {
     return new CustomResourceColumnDefinitionBuilder()
-        .withName(annotation.name())
+        .withName(emptyToNull(annotation.name()))
         .withJsonPath(annotation.jsonPath())
-        .withPriority(annotation.priority())
+        .withPriority(zeroToNull(annotation.priority()))
         .build();
   }
 

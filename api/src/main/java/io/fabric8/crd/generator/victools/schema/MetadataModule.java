@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.emptyToNull;
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotation;
+import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.zeroToNull;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -77,11 +78,12 @@ public class MetadataModule implements Module {
   }
 
   private PrinterColumnInfo mapPrinterColumn(ObjectNode attributes, PrinterColumn annotation) {
-    String name = emptyToNull(annotation.name());
-    String format = ofNullable(emptyToNull(annotation.format()))
+    var name = emptyToNull(annotation.name());
+    var format = ofNullable(emptyToNull(annotation.format()))
         .orElseGet(() -> ofNullable(attributes.get("format"))
             .map(JsonNode::asText)
             .orElse(null));
-    return new PrinterColumnInfo(name, format, annotation.priority());
+    var priority = zeroToNull(annotation.priority());
+    return new PrinterColumnInfo(name, format, priority);
   }
 }

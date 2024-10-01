@@ -18,6 +18,10 @@ public class SchemaGeneratorUtils {
     return ofNullable(value).filter(s -> !s.isEmpty()).orElse(null);
   }
 
+  public static Integer zeroToNull(Integer value) {
+    return ofNullable(value).filter(i -> i != 0).orElse(null);
+  }
+
   public static <A extends Annotation, R extends Annotation> List<A> findRepeatingAnnotations(
       MemberScope<?, ?> member,
       Class<A> annotationClass,

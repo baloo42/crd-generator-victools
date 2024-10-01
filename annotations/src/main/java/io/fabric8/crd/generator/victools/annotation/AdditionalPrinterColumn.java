@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Repeatable(AdditionalPrinterColumn.List.class)
 public @interface AdditionalPrinterColumn {
 
-  String name();
+  String name() default "";
 
   String jsonPath();
 
