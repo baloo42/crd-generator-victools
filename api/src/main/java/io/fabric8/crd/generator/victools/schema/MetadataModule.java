@@ -2,9 +2,12 @@ package io.fabric8.crd.generator.victools.schema;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.victools.jsonschema.generator.FieldScope;
 import com.github.victools.jsonschema.generator.Module;
+import com.github.victools.jsonschema.generator.SchemaGenerationContext;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaKeyword;
+import com.github.victools.jsonschema.generator.TypeScope;
 import io.fabric8.crd.generator.annotation.PrinterColumn;
 import io.fabric8.crd.generator.victools.CustomResourceContext;
 import io.fabric8.crd.generator.victools.PrinterColumnInfo;
@@ -15,6 +18,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -42,39 +47,46 @@ public class MetadataModule implements Module {
 
   @Override
   public void applyToConfigBuilder(SchemaGeneratorConfigBuilder builder) {
-    builder.forFields().withInstanceAttributeOverride((attributes, member, context) -> {
-      var id = UUID.randomUUID().toString();
-      var isIdRequired = new AtomicBoolean(false);
+    builder.forFields().withInstanceAttributeOverride(this::onInstanceAttributes);
+    builder.forTypesInGeneral().withTypeAttributeOverride(this::onType);
+  }
 
-      findAnnotation(member, PrinterColumn.class)
-          .map(annotation -> mapPrinterColumn(attributes, annotation))
-          .ifPresent(info -> {
-            customResourceContext.setPrinterColumnInfo(id, info);
-            isIdRequired.set(true);
-          });
+  private void onType(ObjectNode attributes, TypeScope scope, SchemaGenerationContext context) {
+    customResourceContext.collectDependentClasses(scope.getType().getErasedType());
+  }
 
-      findAnnotation(member, SpecReplicas.class)
-          .ifPresent(annotation -> {
-            customResourceContext.setSpecReplicasPath(id, true);
-            isIdRequired.set(true);
-          });
+  private void onInstanceAttributes(ObjectNode attributes, FieldScope scope, SchemaGenerationContext context) {
+    var id = UUID.randomUUID().toString();
+    var isIdRequired = new AtomicBoolean(false);
 
-      findAnnotation(member, StatusReplicas.class)
-          .ifPresent(annotation -> {
-            customResourceContext.setStatusReplicasPath(id, true);
-            isIdRequired.set(true);
-          });
+    findAnnotation(scope, PrinterColumn.class)
+      .map(annotation -> mapPrinterColumn(attributes, annotation))
+      .ifPresent(info -> {
+        customResourceContext.setPrinterColumnInfo(id, info);
+        isIdRequired.set(true);
+      });
 
-      findAnnotation(member, LabelSelector.class)
-          .ifPresent(annotation -> {
-            customResourceContext.setLabelSelectorPath(id, true);
-            isIdRequired.set(true);
-          });
+    findAnnotation(scope, SpecReplicas.class)
+      .ifPresent(annotation -> {
+        customResourceContext.setSpecReplicasPath(id, true);
+        isIdRequired.set(true);
+      });
 
-      if (isIdRequired.get()) {
-        attributes.put("id", id);
-      }
-    });
+    findAnnotation(scope, StatusReplicas.class)
+      .ifPresent(annotation -> {
+        customResourceContext.setStatusReplicasPath(id, true);
+        isIdRequired.set(true);
+      });
+
+    findAnnotation(scope, LabelSelector.class)
+      .ifPresent(annotation -> {
+        customResourceContext.setLabelSelectorPath(id, true);
+        isIdRequired.set(true);
+      });
+
+    if (isIdRequired.get()) {
+      attributes.put("id", id);
+    }
   }
 
   private PrinterColumnInfo mapPrinterColumn(ObjectNode attributes, PrinterColumn annotation) {

@@ -137,7 +137,7 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
         .build();
     // <<< Post-Processing Phase ---
 
-    crds.add(new AbstractMap.SimpleEntry<>(crd, Collections.emptySet()));
+    crds.add(new AbstractMap.SimpleEntry<>(crd, customResourceContext.getDependentClasses()));
   }
 
   /**

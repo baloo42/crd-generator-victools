@@ -32,7 +32,6 @@ victools/json-schema-generator instead of jackson/json-schema-generator.
 _compared to fabric8/kubernetes-client CRD-Generator v2_
 
 - No support for `@SchemaSwap`/`@SchemaFrom`
-- No support for collecting involved classes
 - Support for `@AdditionalPrinterColumn`
 - Support for `@MapType`
 - Support for `@ExternalDocs`
