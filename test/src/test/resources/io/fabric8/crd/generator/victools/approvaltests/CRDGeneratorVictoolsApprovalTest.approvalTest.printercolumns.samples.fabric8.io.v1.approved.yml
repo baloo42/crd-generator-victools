@@ -14,13 +14,17 @@ spec:
   - additionalPrinterColumns:
     - jsonPath: ".spec.deepLevel1.deepLevel2.fromLevel2"
       name: "fromLevel2"
+      priority: 0
       type: "boolean"
     - jsonPath: ".spec.deepLevel1.fromLevel1"
       name: "fromLevel1"
+      priority: 0
       type: "integer"
     - jsonPath: ".spec.deepLevel1.name"
+      priority: 0
     - jsonPath: ".spec.id"
       name: "id"
+      priority: 0
       type: "string"
     name: "v1alpha1"
     schema:

@@ -83,7 +83,7 @@ public class MetadataModule implements Module {
         .orElseGet(() -> ofNullable(attributes.get("format"))
             .map(JsonNode::asText)
             .orElse(null));
-    var priority = zeroToNull(annotation.priority());
+    var priority = annotation.priority();
     return new PrinterColumnInfo(name, format, priority);
   }
 }
