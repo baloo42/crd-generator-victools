@@ -18,14 +18,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.emptyToNull;
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotation;
-import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.zeroToNull;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -60,29 +57,29 @@ public class MetadataModule implements Module {
     var isIdRequired = new AtomicBoolean(false);
 
     findAnnotation(scope, PrinterColumn.class)
-      .map(annotation -> mapPrinterColumn(attributes, annotation))
-      .ifPresent(info -> {
-        customResourceContext.setPrinterColumnInfo(id, info);
-        isIdRequired.set(true);
-      });
+        .map(annotation -> mapPrinterColumn(attributes, annotation))
+        .ifPresent(info -> {
+          customResourceContext.setPrinterColumnInfo(id, info);
+          isIdRequired.set(true);
+        });
 
     findAnnotation(scope, SpecReplicas.class)
-      .ifPresent(annotation -> {
-        customResourceContext.setSpecReplicasPath(id, true);
-        isIdRequired.set(true);
-      });
+        .ifPresent(annotation -> {
+          customResourceContext.setSpecReplicasPath(id, true);
+          isIdRequired.set(true);
+        });
 
     findAnnotation(scope, StatusReplicas.class)
-      .ifPresent(annotation -> {
-        customResourceContext.setStatusReplicasPath(id, true);
-        isIdRequired.set(true);
-      });
+        .ifPresent(annotation -> {
+          customResourceContext.setStatusReplicasPath(id, true);
+          isIdRequired.set(true);
+        });
 
     findAnnotation(scope, LabelSelector.class)
-      .ifPresent(annotation -> {
-        customResourceContext.setLabelSelectorPath(id, true);
-        isIdRequired.set(true);
-      });
+        .ifPresent(annotation -> {
+          customResourceContext.setLabelSelectorPath(id, true);
+          isIdRequired.set(true);
+        });
 
     if (isIdRequired.get()) {
       attributes.put("id", id);
