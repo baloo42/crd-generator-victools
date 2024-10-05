@@ -16,38 +16,38 @@ import java.util.Map;
  * Methods in this interface can be considered as stable.
  */
 public interface CRDGeneratorApi {
-  CRDGenerator withOutputDirectory(File outputDir);
+  CRDGeneratorApi withOutputDirectory(File outputDir);
 
-  CRDGenerator withOutput(CRDOutput<? extends OutputStream> output);
+  CRDGeneratorApi withOutput(CRDOutput<? extends OutputStream> output);
 
-  CRDGenerator withFilenameFormat(String filenameFormat);
+  CRDGeneratorApi withFilenameFormat(String filenameFormat);
 
-  CRDGenerator withImplicitPreserveUnknownFields(boolean implicitPreserveUnknownFields);
+  CRDGeneratorApi withImplicitPreserveUnknownFields(boolean implicitPreserveUnknownFields);
 
-  CRDGenerator withParallelGenerationEnabled(boolean parallel);
+  CRDGeneratorApi withParallelGenerationEnabled(boolean parallel);
 
-  CRDGenerator withHeader(String header);
+  CRDGeneratorApi withHeader(String header);
 
-  CRDGenerator withAnnotations(Map<String, String> annotations);
+  CRDGeneratorApi withAnnotations(Map<String, String> annotations);
 
-  CRDGenerator withLabels(Map<String, String> labels);
+  CRDGeneratorApi withLabels(Map<String, String> labels);
 
-  CRDGenerator withObjectMapper(ObjectMapper mapper, KubernetesSerialization kubernetesSerialization);
+  CRDGeneratorApi withObjectMapper(ObjectMapper mapper, KubernetesSerialization kubernetesSerialization);
 
-  CRDGenerator forCRDVersions(List<String> versions);
+  CRDGeneratorApi forCRDVersions(List<String> versions);
 
-  CRDGenerator forCRDVersions(String... versions);
+  CRDGeneratorApi forCRDVersions(String... versions);
 
-  CRDGenerator forCRDVersions(CRDVersion... versions);
+  CRDGeneratorApi forCRDVersions(CRDVersion... versions);
 
   @SuppressWarnings("unchecked")
-  CRDGenerator customResourceClasses(Class<? extends HasMetadata>... crClasses);
+  CRDGeneratorApi customResourceClasses(Class<? extends HasMetadata>... crClasses);
 
-  CRDGenerator customResourceClasses(Collection<Class<? extends HasMetadata>> crClasses);
+  CRDGeneratorApi customResourceClasses(Collection<Class<? extends HasMetadata>> crClasses);
 
-  CRDGenerator customResources(Collection<CustomResourceInfo> infos);
+  CRDGeneratorApi customResources(Collection<CustomResourceInfo> infos);
 
-  CRDGenerator customResources(CustomResourceInfo... infos);
+  CRDGeneratorApi customResources(CustomResourceInfo... infos);
 
   int generate();
 
