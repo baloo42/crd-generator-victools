@@ -25,31 +25,32 @@ public class Fabric8Module implements Module {
   @Override
   public void applyToConfigBuilder(SchemaGeneratorConfigBuilder builder) {
     builder.forFields().withDefaultResolver(this::resolveDefault);
-    builder.forFields().withNumberInclusiveMinimumResolver(this::resolveNumberInclusiveMinimum);
-    builder.forFields().withNumberInclusiveMaximumResolver(this::resolveNumberExclusiveMaximum);
-    builder.forFields().withStringMaxLengthResolver(this::resolveStringMaxLength);
-    builder.forFields().withStringMinLengthResolver(this::resolveStringMinLength);
-    builder.forFields().withStringPatternResolver(this::resolvePattern);
     builder.forFields().withNullableCheck(this::checkNullable);
     builder.forFields().withRequiredCheck(this::checkRequired);
+    builder.forFields().withNumberInclusiveMinimumResolver(this::resolveNumberInclusiveMinimum);
+    builder.forFields().withNumberInclusiveMaximumResolver(this::resolveNumberExclusiveMaximum);
+    //builder.forFields().withNumberExclusiveMaximumResolver(this::resolveNumberExclusiveMaximum);
+    builder.forFields().withStringMinLengthResolver(this::resolveStringMinLength);
+    builder.forFields().withStringMaxLengthResolver(this::resolveStringMaxLength);
+    builder.forFields().withStringPatternResolver(this::resolvePattern);
 
     builder.forMethods().withDefaultResolver(this::resolveDefault);
-    builder.forMethods().withNumberInclusiveMinimumResolver(this::resolveNumberInclusiveMinimum);
-    builder.forMethods().withNumberExclusiveMaximumResolver(this::resolveNumberExclusiveMaximum);
-    builder.forMethods().withStringMaxLengthResolver(this::resolveStringMaxLength);
-    builder.forMethods().withStringMinLengthResolver(this::resolveStringMinLength);
-    builder.forMethods().withStringPatternResolver(this::resolvePattern);
     builder.forMethods().withNullableCheck(this::checkNullable);
     builder.forMethods().withRequiredCheck(this::checkRequired);
+    builder.forMethods().withNumberInclusiveMinimumResolver(this::resolveNumberInclusiveMinimum);
+    builder.forMethods().withNumberInclusiveMaximumResolver(this::resolveNumberExclusiveMaximum);
+    builder.forMethods().withStringMinLengthResolver(this::resolveStringMinLength);
+    builder.forMethods().withStringMaxLengthResolver(this::resolveStringMaxLength);
+    builder.forMethods().withStringPatternResolver(this::resolvePattern);
   }
 
-  public Object resolveDefault(MemberScope<?, ?> member) {
+  private Object resolveDefault(MemberScope<?, ?> member) {
     if (member.isFakeContainerItemScope()) {
       return null;
     }
     return findAnnotationConsideringFieldAndGetter(member, Default.class)
-        .map(Default::value)
-        .orElse(null);
+      .map(Default::value)
+      .orElse(null);
   }
 
   private BigDecimal resolveNumberInclusiveMinimum(MemberScope<?, ?> member) {
@@ -57,16 +58,17 @@ public class Fabric8Module implements Module {
       return null;
     }
     if (member.isFakeContainerItemScope()) {
-      return ofNullable(member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Min.class))
-          .map(io.fabric8.crd.generator.victools.annotation.Min::value)
-          .map(BigDecimal::valueOf)
-          .orElse(null);
+      return ofNullable(
+        member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Min.class))
+        .map(io.fabric8.crd.generator.victools.annotation.Min::value)
+        .map(v -> map(member.getType().getErasedType(), v))
+        .orElse(null);
     }
 
     return findAnnotationConsideringFieldAndGetter(member, Min.class)
-        .map(Min::value)
-        .map(BigDecimal::valueOf)
-        .orElse(null);
+      .map(Min::value)
+      .map(v -> map(member.getType().getErasedType(), v))
+      .orElse(null);
   }
 
   private BigDecimal resolveNumberExclusiveMaximum(MemberScope<?, ?> member) {
@@ -74,77 +76,90 @@ public class Fabric8Module implements Module {
       return null;
     }
     if (member.isFakeContainerItemScope()) {
-      return ofNullable(member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Max.class))
-          .map(io.fabric8.crd.generator.victools.annotation.Max::value)
-          .map(BigDecimal::valueOf)
-          .orElse(null);
+      return ofNullable(
+        member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Max.class))
+        .map(io.fabric8.crd.generator.victools.annotation.Max::value)
+        .map(v -> map(member.getType().getErasedType(), v))
+        .orElse(null);
     }
 
     return findAnnotationConsideringFieldAndGetter(member, Max.class)
-        .map(Max::value)
-        .map(BigDecimal::valueOf)
-        .orElse(null);
+      .map(Max::value)
+      .map(v -> map(member.getType().getErasedType(), v))
+      .orElse(null);
   }
 
-  public Integer resolveStringMaxLength(MemberScope<?, ?> member) {
+  private Integer resolveStringMaxLength(MemberScope<?, ?> member) {
     if (!member.getType().getErasedType().equals(String.class)) {
       return null;
     }
     if (member.isFakeContainerItemScope()) {
-      return ofNullable(member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Max.class))
-          .map(io.fabric8.crd.generator.victools.annotation.Max::value)
-          .map(Double::intValue)
-          .orElse(null);
+      return ofNullable(
+        member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Max.class))
+        .map(io.fabric8.crd.generator.victools.annotation.Max::value)
+        .map(Double::intValue)
+        .orElse(null);
     }
 
     return findAnnotationConsideringFieldAndGetter(member, Max.class)
-        .map(ann -> (int) ann.value())
-        .orElse(null);
+      .map(ann -> (int) ann.value())
+      .orElse(null);
   }
 
-  public Integer resolveStringMinLength(MemberScope<?, ?> member) {
+  private Integer resolveStringMinLength(MemberScope<?, ?> member) {
     if (!member.getType().getErasedType().equals(String.class)) {
       return null;
     }
     if (member.isFakeContainerItemScope()) {
-      return ofNullable(member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Min.class))
-          .map(io.fabric8.crd.generator.victools.annotation.Min::value)
-          .map(Double::intValue)
-          .orElse(null);
+      return ofNullable(
+        member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Min.class))
+        .map(io.fabric8.crd.generator.victools.annotation.Min::value)
+        .map(Double::intValue)
+        .orElse(null);
     }
 
     return findAnnotationConsideringFieldAndGetter(member, Min.class)
-        .map(ann -> (int) ann.value())
-        .orElse(null);
+      .map(ann -> (int) ann.value())
+      .orElse(null);
   }
 
-  public String resolvePattern(MemberScope<?, ?> member) {
+  private String resolvePattern(MemberScope<?, ?> member) {
     if (!member.getType().getErasedType().equals(String.class)) {
       return null;
     }
     if (member.isFakeContainerItemScope()) {
-      return ofNullable(member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Pattern.class))
-          .map(io.fabric8.crd.generator.victools.annotation.Pattern::value)
-          .orElse(null);
+      return ofNullable(member.getContainerItemAnnotation(
+        io.fabric8.crd.generator.victools.annotation.Pattern.class))
+        .map(io.fabric8.crd.generator.victools.annotation.Pattern::value)
+        .orElse(null);
     }
 
     return findAnnotationConsideringFieldAndGetter(member, Pattern.class)
-        .map(Pattern::value)
-        .orElse(null);
+      .map(Pattern::value)
+      .orElse(null);
   }
 
-  public Boolean checkNullable(MemberScope<?, ?> member) {
+  private Boolean checkNullable(MemberScope<?, ?> member) {
     if (member.isFakeContainerItemScope()) {
       return null;
     }
     return findAnnotationConsideringFieldAndGetter(member, Nullable.class).isPresent();
   }
 
-  public Boolean checkRequired(MemberScope<?, ?> member) {
+  private Boolean checkRequired(MemberScope<?, ?> member) {
     if (member.isFakeContainerItemScope()) {
       return null;
     }
     return findAnnotationConsideringFieldAndGetter(member, Required.class).isPresent();
+  }
+
+
+  private static BigDecimal map(Class<?> clazz, Double d) {
+    if (clazz.isAssignableFrom(Integer.class)
+        || clazz.isAssignableFrom(Long.class)) {
+      return BigDecimal.valueOf(d.longValue());
+    }
+    return BigDecimal.valueOf(d);
   }
 
 }

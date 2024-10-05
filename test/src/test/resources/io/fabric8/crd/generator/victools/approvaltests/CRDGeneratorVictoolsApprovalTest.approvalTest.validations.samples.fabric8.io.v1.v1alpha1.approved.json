@@ -5,16 +5,16 @@
         "onDouble" : {
           "properties" : {
             "mustBeGreaterThanOne" : {
-              "minimum" : 1.0,
+              "minimum" : 1,
               "type" : "number"
             },
             "mustBeGreaterThanOneAndLessThanThree" : {
-              "maximum" : 3.0,
-              "minimum" : 1.0,
+              "maximum" : 3,
+              "minimum" : 1,
               "type" : "number"
             },
             "mustBeLessThanOne" : {
-              "maximum" : 1.0,
+              "maximum" : 1,
               "type" : "number"
             }
           },
@@ -23,16 +23,16 @@
         "onDoublePrim" : {
           "properties" : {
             "mustBeGreaterThanOne" : {
-              "minimum" : 1.0,
+              "minimum" : 1,
               "type" : "number"
             },
             "mustBeGreaterThanOneAndLessThanThree" : {
-              "maximum" : 3.0,
-              "minimum" : 1.0,
+              "maximum" : 3,
+              "minimum" : 1,
               "type" : "number"
             },
             "mustBeLessThanOne" : {
-              "maximum" : 1.0,
+              "maximum" : 1,
               "type" : "number"
             }
           },
@@ -41,16 +41,16 @@
         "onFloat" : {
           "properties" : {
             "mustBeGreaterThanOne" : {
-              "minimum" : 1.0,
+              "minimum" : 1,
               "type" : "number"
             },
             "mustBeGreaterThanOneAndLessThanThree" : {
-              "maximum" : 3.0,
-              "minimum" : 1.0,
+              "maximum" : 3,
+              "minimum" : 1,
               "type" : "number"
             },
             "mustBeLessThanOne" : {
-              "maximum" : 1.0,
+              "maximum" : 1,
               "type" : "number"
             }
           },
@@ -59,16 +59,16 @@
         "onFloatPrim" : {
           "properties" : {
             "mustBeGreaterThanOne" : {
-              "minimum" : 1.0,
+              "minimum" : 1,
               "type" : "number"
             },
             "mustBeGreaterThanOneAndLessThanThree" : {
-              "maximum" : 3.0,
-              "minimum" : 1.0,
+              "maximum" : 3,
+              "minimum" : 1,
               "type" : "number"
             },
             "mustBeLessThanOne" : {
-              "maximum" : 1.0,
+              "maximum" : 1,
               "type" : "number"
             }
           },
@@ -78,59 +78,59 @@
           "properties" : {
             "inListMustBeGreaterThanOne" : {
               "items" : {
-                "minimum" : 1.0,
+                "minimum" : 1,
                 "type" : "integer"
               },
               "type" : "array"
             },
             "inListMustBeGreaterThanOneAndLessThanThree" : {
               "items" : {
-                "maximum" : 3.0,
-                "minimum" : 1.0,
+                "maximum" : 3,
+                "minimum" : 1,
                 "type" : "integer"
               },
               "type" : "array"
             },
             "inListMustBeLessThanThree" : {
               "items" : {
-                "maximum" : 3.0,
+                "maximum" : 3,
                 "type" : "integer"
               },
               "type" : "array"
             },
             "inMapMustBeGreaterThanOne" : {
               "additionalProperties" : {
-                "minimum" : 1.0,
+                "minimum" : 1,
                 "type" : "integer"
               },
               "type" : "object"
             },
             "inMapMustBeGreaterThanOneAndLessThanThree" : {
               "additionalProperties" : {
-                "maximum" : 3.0,
-                "minimum" : 1.0,
+                "maximum" : 3,
+                "minimum" : 1,
                 "type" : "integer"
               },
               "type" : "object"
             },
             "inMapMustBeLessThanThree" : {
               "additionalProperties" : {
-                "maximum" : 3.0,
+                "maximum" : 3,
                 "type" : "integer"
               },
               "type" : "object"
             },
             "mustBeGreaterThanOne" : {
-              "minimum" : 1.0,
+              "minimum" : 1,
               "type" : "integer"
             },
             "mustBeGreaterThanOneAndLessThanThree" : {
-              "maximum" : 3.0,
-              "minimum" : 1.0,
+              "maximum" : 3,
+              "minimum" : 1,
               "type" : "integer"
             },
             "mustBeLessThanOne" : {
-              "maximum" : 1.0,
+              "maximum" : 1,
               "type" : "integer"
             }
           },
@@ -139,16 +139,16 @@
         "onIntegerPrim" : {
           "properties" : {
             "mustBeGreaterThanOne" : {
-              "minimum" : 1.0,
+              "minimum" : 1,
               "type" : "integer"
             },
             "mustBeGreaterThanOneAndLessThanThree" : {
-              "maximum" : 3.0,
-              "minimum" : 1.0,
+              "maximum" : 3,
+              "minimum" : 1,
               "type" : "integer"
             },
             "mustBeLessThanOne" : {
-              "maximum" : 1.0,
+              "maximum" : 1,
               "type" : "integer"
             }
           },
@@ -157,16 +157,16 @@
         "onLong" : {
           "properties" : {
             "mustBeGreaterThanOne" : {
-              "minimum" : 1.0,
+              "minimum" : 1,
               "type" : "integer"
             },
             "mustBeGreaterThanOneAndLessThanThree" : {
-              "maximum" : 3.0,
-              "minimum" : 1.0,
+              "maximum" : 3,
+              "minimum" : 1,
               "type" : "integer"
             },
             "mustBeLessThanOne" : {
-              "maximum" : 1.0,
+              "maximum" : 1,
               "type" : "integer"
             }
           },
@@ -175,16 +175,16 @@
         "onLongPrim" : {
           "properties" : {
             "mustBeGreaterThanOne" : {
-              "minimum" : 1.0,
+              "minimum" : 1,
               "type" : "integer"
             },
             "mustBeGreaterThanOneAndLessThanThree" : {
-              "maximum" : 3.0,
-              "minimum" : 1.0,
+              "maximum" : 3,
+              "minimum" : 1,
               "type" : "integer"
             },
             "mustBeLessThanOne" : {
-              "maximum" : 1.0,
+              "maximum" : 1,
               "type" : "integer"
             }
           },
