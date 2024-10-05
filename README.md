@@ -36,6 +36,7 @@ _compared to fabric8/kubernetes-client CRD-Generator v2_
 - Support for `@AdditionalPrinterColumn`
 - Support for `@MapType`
 - Support for `@ExternalDocs`
+- Support for `@AdditionalSelectableField` / `@SelectableField`
 - Support for Jackson including `anyOf`/`@JsonSubTypes`.
 - Support for Jakarta Validations Annotations (not yet fully tested)
 - Support for Swagger 2 Annotations (not yet fully tested)
