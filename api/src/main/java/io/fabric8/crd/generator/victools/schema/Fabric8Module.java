@@ -28,7 +28,7 @@ public class Fabric8Module implements Module {
     builder.forFields().withNullableCheck(this::checkNullable);
     builder.forFields().withRequiredCheck(this::checkRequired);
     builder.forFields().withNumberInclusiveMinimumResolver(this::resolveNumberInclusiveMinimum);
-    builder.forFields().withNumberInclusiveMaximumResolver(this::resolveNumberExclusiveMaximum);
+    builder.forFields().withNumberInclusiveMaximumResolver(this::resolveNumberInclusiveMaximum);
     builder.forFields().withStringMinLengthResolver(this::resolveStringMinLength);
     builder.forFields().withStringMaxLengthResolver(this::resolveStringMaxLength);
     builder.forFields().withStringPatternResolver(this::resolvePattern);
@@ -37,7 +37,7 @@ public class Fabric8Module implements Module {
     builder.forMethods().withNullableCheck(this::checkNullable);
     builder.forMethods().withRequiredCheck(this::checkRequired);
     builder.forMethods().withNumberInclusiveMinimumResolver(this::resolveNumberInclusiveMinimum);
-    builder.forMethods().withNumberInclusiveMaximumResolver(this::resolveNumberExclusiveMaximum);
+    builder.forMethods().withNumberInclusiveMaximumResolver(this::resolveNumberInclusiveMaximum);
     builder.forMethods().withStringMinLengthResolver(this::resolveStringMinLength);
     builder.forMethods().withStringMaxLengthResolver(this::resolveStringMaxLength);
     builder.forMethods().withStringPatternResolver(this::resolvePattern);
@@ -70,7 +70,7 @@ public class Fabric8Module implements Module {
         .orElse(null);
   }
 
-  private BigDecimal resolveNumberExclusiveMaximum(MemberScope<?, ?> member) {
+  private BigDecimal resolveNumberInclusiveMaximum(MemberScope<?, ?> member) {
     if (member.getType().getErasedType().equals(String.class)) {
       return null;
     }
