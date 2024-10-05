@@ -1,6 +1,5 @@
 package io.fabric8.crd.generator.victools;
 
-import io.fabric8.kubernetes.client.utils.Utils;
 import lombok.Builder;
 import lombok.NonNull;
 
@@ -11,10 +10,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
+import java.util.AbstractMap;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 public interface CRDOutput<T extends OutputStream> extends Closeable {
 
@@ -25,7 +30,7 @@ public interface CRDOutput<T extends OutputStream> extends Closeable {
   }
 
   default String getName(CRDOutputContext details) {
-    return Utils.interpolateString(details.filenameFormat(), details.getInterpolationContext());
+    return interpolateString(details.filenameFormat(), details.getInterpolationContext());
   }
 
   interface CRDOutputContext {
@@ -148,6 +153,34 @@ public interface CRDOutput<T extends OutputStream> extends Closeable {
     public URI getURI(CRDOutputContext details) {
       return getFile(details).toURI();
     }
+  }
+
+  /**
+   * Interpolates a String containing variable placeholders with the values provided in the valuesMap.
+   *
+   * <p>
+   * This method is intended to interpolate templates loaded from YAML and JSON files.
+   *
+   * <p>
+   * Placeholders are indicated by double curly braces ({@code {{VARIABLE_KEY}}}).
+   *
+   * @param valuesMap to interpolate in the String
+   * @param templateInput raw input containing a String with placeholders ready to be interpolated
+   * @return the interpolated String
+   */
+  static String interpolateString(String templateInput, Map<String, String> valuesMap) {
+    return Optional.ofNullable(valuesMap).orElse(Collections.emptyMap()).entrySet().stream()
+        .filter(entry -> entry.getKey() != null)
+        .filter(entry -> entry.getValue() != null)
+        .flatMap(entry -> {
+          final String key = entry.getKey();
+          final String value = entry.getValue();
+          return Stream.of(
+              new AbstractMap.SimpleEntry<>("{{" + key + "}}", value));
+        })
+        .map(explodedParam -> (Function<String, String>) s -> s.replace(explodedParam.getKey(), explodedParam.getValue()))
+        .reduce(Function.identity(), Function::andThen)
+        .apply(Objects.requireNonNull(templateInput, "templateInput is required"));
   }
 
 }
