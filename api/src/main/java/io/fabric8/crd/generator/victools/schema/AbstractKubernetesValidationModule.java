@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.victools.jsonschema.generator.FieldScope;
 import com.github.victools.jsonschema.generator.MemberScope;
 import com.github.victools.jsonschema.generator.MethodScope;
+import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGenerationContext;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import io.fabric8.crd.generator.victools.AnnotationUtils;
@@ -24,8 +25,9 @@ import static io.fabric8.crd.generator.victools.spi.KubernetesSchemaKeyword.KUBE
 
 @Slf4j
 public abstract class AbstractKubernetesValidationModule<A extends Annotation, C extends Annotation>
-    extends AbstractCRDGeneratorModule {
+    implements Module {
 
+  private final CRDGeneratorContextInternal context;
   private final Class<A> annotationClass;
   private final Class<C> annotationContainerClass;
   private final Function<C, A[]> annotationsFromContainerFunction;
@@ -37,7 +39,7 @@ public abstract class AbstractKubernetesValidationModule<A extends Annotation, C
       Class<C> annotationContainerClass,
       Function<C, A[]> annotationsFromContainerFunction,
       Function<A, Object> createRuleFromAnnotationFunction) {
-    super(context);
+    this.context = context;
     this.annotationClass = annotationClass;
     this.annotationContainerClass = annotationContainerClass;
     this.annotationsFromContainerFunction = annotationsFromContainerFunction;
@@ -120,7 +122,7 @@ public abstract class AbstractKubernetesValidationModule<A extends Annotation, C
       var validationsNode = node.withArrayProperty(KUBERNETES_VALIDATIONS.getValue());
       var rules = annotations.stream()
           .map(createRuleFromAnnotationFunction)
-          .map(getContext()::convertValueToJsonNode)
+          .map(context::convertValueToJsonNode)
           .toList();
       validationsNode.addAll(rules);
     }

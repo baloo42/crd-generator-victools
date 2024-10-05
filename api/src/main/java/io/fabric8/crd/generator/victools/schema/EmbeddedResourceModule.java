@@ -1,11 +1,11 @@
 package io.fabric8.crd.generator.victools.schema;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGenerationContext;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.TypeAttributeOverrideV2;
 import com.github.victools.jsonschema.generator.TypeScope;
-import io.fabric8.crd.generator.victools.CRDGeneratorContextInternal;
 import io.fabric8.kubernetes.api.model.GenericKubernetesResource;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.runtime.RawExtension;
@@ -15,16 +15,12 @@ import java.util.stream.Collectors;
 
 import static io.fabric8.crd.generator.victools.spi.KubernetesSchemaKeyword.KUBERNETES_EMBEDDED_RESOURCE;
 
-public class EmbeddedResourceModule extends AbstractCRDGeneratorModule {
+public class EmbeddedResourceModule implements Module {
 
   private static final Set<Class<?>> IMPLICIT_CLASSES = Set.of(
       RawExtension.class,
       GenericKubernetesResource.class,
       HasMetadata.class);
-
-  public EmbeddedResourceModule(CRDGeneratorContextInternal context) {
-    super(context);
-  }
 
   @Override
   public void applyToConfigBuilder(SchemaGeneratorConfigBuilder builder) {

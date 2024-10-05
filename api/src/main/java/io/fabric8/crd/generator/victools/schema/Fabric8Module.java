@@ -1,8 +1,8 @@
 package io.fabric8.crd.generator.victools.schema;
 
 import com.github.victools.jsonschema.generator.MemberScope;
+import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
-import io.fabric8.crd.generator.victools.CRDGeneratorContextInternal;
 import io.fabric8.generator.annotation.Default;
 import io.fabric8.generator.annotation.Max;
 import io.fabric8.generator.annotation.Min;
@@ -17,11 +17,7 @@ import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.find
 /**
  * Module that enables injection of attributes from Fabric8 annotations.
  */
-public class Fabric8Module extends AbstractCRDGeneratorModule {
-
-  public Fabric8Module(CRDGeneratorContextInternal context) {
-    super(context);
-  }
+public class Fabric8Module implements Module {
 
   @Override
   public void applyToConfigBuilder(SchemaGeneratorConfigBuilder builder) {
