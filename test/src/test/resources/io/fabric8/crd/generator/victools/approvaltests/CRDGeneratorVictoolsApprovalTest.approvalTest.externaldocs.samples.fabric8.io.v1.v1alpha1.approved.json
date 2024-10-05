@@ -1,0 +1,41 @@
+{
+  "properties" : {
+    "spec" : {
+      "properties" : {
+        "classWithExternalDocs" : {
+          "externalDocs" : {
+            "description" : "A description on a class"
+          },
+          "type" : "object"
+        },
+        "description" : {
+          "externalDocs" : {
+            "description" : "A description"
+          },
+          "type" : "string"
+        },
+        "noExternalDocs" : {
+          "type" : "string"
+        },
+        "url" : {
+          "externalDocs" : {
+            "url" : "https://docs.example.com/message"
+          },
+          "type" : "string"
+        },
+        "urlAndDescription" : {
+          "externalDocs" : {
+            "description" : "A description",
+            "url" : "https://docs.example.com/message"
+          },
+          "type" : "string"
+        }
+      },
+      "type" : "object"
+    },
+    "status" : {
+      "type" : "object"
+    }
+  },
+  "type" : "object"
+}

@@ -44,7 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class CRDGeneratorVictoolsApprovalTest {
 
-  @TempDir(cleanup = CleanupMode.NEVER)
+  @TempDir(cleanup = CleanupMode.ON_SUCCESS)
   File tempDir;
 
   @BeforeEach
@@ -76,6 +76,15 @@ class CRDGeneratorVictoolsApprovalTest {
     Approvals.verify(
         new FileApprovalWriter(new File(result.get(expectedCrd).get(version).getFilePath())),
         new Namer(expectedCrd, version));
+
+    for (var schemaFilePathEntry : result.get(expectedCrd).get(version).getSchemaFilePaths().entrySet()) {
+      final var resourceAPIVersion = schemaFilePathEntry.getKey();
+      final var schemaFile = schemaFilePathEntry.getValue();
+
+      Approvals.verify(
+          new FileApprovalWriter(new File(schemaFile)),
+          new Namer(expectedCrd, version, resourceAPIVersion));
+    }
   }
 
   static Stream<Arguments> crdV1ApprovalTests() {
@@ -103,7 +112,12 @@ class CRDGeneratorVictoolsApprovalTest {
     private final boolean parallel;
 
     @SafeVarargs
-    public TestCase(String expectedCrd, String version, boolean parallel, Class<? extends CustomResource<?, ?>>... crClasses) {
+    public TestCase(
+        String expectedCrd,
+        String version,
+        boolean parallel,
+        Class<? extends CustomResource<?, ?>>... crClasses) {
+
       this.expectedCrd = expectedCrd;
       this.version = version;
       this.parallel = parallel;
