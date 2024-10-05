@@ -11,6 +11,7 @@ import com.github.victools.jsonschema.generator.TypeScope;
 import io.fabric8.crd.generator.annotation.PrinterColumn;
 import io.fabric8.crd.generator.victools.CustomResourceContext;
 import io.fabric8.crd.generator.victools.PrinterColumnInfo;
+import io.fabric8.crd.generator.victools.annotation.SelectableField;
 import io.fabric8.kubernetes.model.annotation.LabelSelector;
 import io.fabric8.kubernetes.model.annotation.SpecReplicas;
 import io.fabric8.kubernetes.model.annotation.StatusReplicas;
@@ -78,6 +79,12 @@ public class MetadataModule implements Module {
     findAnnotation(scope, LabelSelector.class)
         .ifPresent(annotation -> {
           customResourceContext.setLabelSelectorPath(id, true);
+          isIdRequired.set(true);
+        });
+
+    findAnnotation(scope, SelectableField.class)
+        .ifPresent(annotation -> {
+          customResourceContext.setSelectableFieldPath(id, true);
           isIdRequired.set(true);
         });
 

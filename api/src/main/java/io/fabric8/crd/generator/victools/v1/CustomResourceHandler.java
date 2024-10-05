@@ -23,20 +23,15 @@ import io.fabric8.crd.generator.victools.CRDGeneratorSchemaOption;
 import io.fabric8.crd.generator.victools.CRDResult;
 import io.fabric8.crd.generator.victools.CustomResourceContext;
 import io.fabric8.crd.generator.victools.CustomResourceInfo;
-import io.fabric8.crd.generator.victools.annotation.AdditionalPrinterColumn;
-import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceColumnDefinition;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinition;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionBuilder;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionVersion;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionVersionBuilder;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.JSONSchemaProps;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.JSONSchemaPropsBuilder;
-import io.fabric8.kubernetes.api.model.apiextensions.v1.ValidationRule;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.AbstractMap;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -46,7 +41,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.fabric8.crd.generator.victools.AnnotationUtils.findRepeatingAnnotations;
+import static io.fabric8.crd.generator.victools.v1.CRDv1Utils.findTopLevelValidationRules;
 import static io.fabric8.kubernetes.client.utils.KubernetesVersionPriority.sortByPriority;
 import static java.util.Optional.ofNullable;
 
@@ -66,11 +61,10 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
     final String version = crInfo.version();
 
     // >>> Schema-Generation Phase ---
-    var rootSchemaBuilder = new JSONSchemaPropsBuilder()
+    final var rootSchemaBuilder = new JSONSchemaPropsBuilder()
         .withType("object");
 
-    var rootSchema = schemaGenerator.generateSchema(crInfo.definition());
-    log.info("rootSchema: {}", rootSchema);
+    final var rootSchema = schemaGenerator.generateSchema(crInfo.definition());
 
     rootSchema.get("properties").properties().stream()
         .filter(prop -> !Set.of("metadata", "kind", "apiVersion").contains(prop.getKey()))
@@ -86,10 +80,12 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
     // <<< Schema-Generation Phase ---
 
     // >>> Post-Processing Phase ---
-    var printerColumnCollector = new PrinterColumnCollector(customResourceContext);
+    var printerColumnCollector = new PrinterColumnCollector(crInfo, customResourceContext);
+    var selectableFieldCollector = new SelectableFieldCollector(crInfo, customResourceContext);
     var scaleSubresourceCollector = new ScaleSubresourceCollector(customResourceContext);
     new PathAwareSchemaPropsVisitor()
         .withIdentifiedPropertyVisitor(printerColumnCollector)
+        .withIdentifiedPropertyVisitor(selectableFieldCollector)
         .withIdentifiedPropertyVisitor(scaleSubresourceCollector)
         .visit(rootSchemaBuilder);
 
@@ -103,20 +99,19 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
         .withOpenAPIV3Schema(rootSchemaBuilder.build())
         .endSchema();
 
-    builder.addAllToAdditionalPrinterColumns(
-        getAdditionalPrinterColumns(printerColumnCollector, crInfo));
+    builder.addAllToAdditionalPrinterColumns(printerColumnCollector.getColumns());
+    builder.addAllToSelectableFields(selectableFieldCollector.getSelectableFields());
 
     scaleSubresourceCollector.findScaleSubresource()
         .ifPresent(scale -> builder.editOrNewSubresources()
             .withScale(scale)
             .endSubresources());
 
-    if (crInfo.statusClassName().isPresent()) {
-      builder.editOrNewSubresources()
-          .withNewStatus()
-          .endStatus()
-          .endSubresources();
-    }
+    crInfo.statusClassName()
+        .ifPresent(s -> builder.editOrNewSubresources()
+            .withNewStatus()
+            .endStatus()
+            .endSubresources());
 
     CustomResourceDefinition crd = new CustomResourceDefinitionBuilder()
         .withNewMetadata()
@@ -139,29 +134,6 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
     // <<< Post-Processing Phase ---
 
     crds.add(new AbstractMap.SimpleEntry<>(crd, customResourceContext.getDependentClasses()));
-  }
-
-  private Collection<ValidationRule> findTopLevelValidationRules(CustomResourceInfo crInfo) {
-    return findRepeatingAnnotations(
-        crInfo.definition(),
-        io.fabric8.generator.annotation.ValidationRule.class).stream()
-        .map(CRDv1Utils::createValidationRule)
-        .toList();
-  }
-
-  private Collection<CustomResourceColumnDefinition> findTopLevelPrinterColumns(CustomResourceInfo crInfo) {
-    return findRepeatingAnnotations(crInfo.definition(), AdditionalPrinterColumn.class).stream()
-        .map(CRDv1Utils::createColumnDefinition)
-        .toList();
-  }
-
-  private Collection<CustomResourceColumnDefinition> getAdditionalPrinterColumns(
-      PrinterColumnCollector collector, CustomResourceInfo crInfo) {
-
-    return Stream.of(collector.getColumns(), findTopLevelPrinterColumns(crInfo))
-        .flatMap(Collection::stream)
-        .sorted(Comparator.comparing(CustomResourceColumnDefinition::getJsonPath))
-        .toList();
   }
 
   /**

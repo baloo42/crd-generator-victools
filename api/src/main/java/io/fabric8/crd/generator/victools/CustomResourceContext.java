@@ -79,6 +79,16 @@ public class CustomResourceContext {
         .orElse(false);
   }
 
+  public void setSelectableFieldPath(String fieldId, boolean isSelectableFieldPath) {
+    getFieldMeta(fieldId).setSelectableFieldPath(isSelectableFieldPath);
+  }
+
+  public boolean isSelectableFieldPath(String fieldId) {
+    return findFieldMeta(fieldId)
+        .map(FieldMetadata::isSelectableFieldPath)
+        .orElse(false);
+  }
+
   private FieldMetadata getFieldMeta(String fieldId) {
     fieldMeta.putIfAbsent(fieldId, new FieldMetadata());
     return fieldMeta.get(fieldId);
@@ -98,6 +108,7 @@ public class CustomResourceContext {
     private boolean specReplicasPath;
     private boolean statusReplicasPath;
     private boolean labelSelectorPath;
+    private boolean selectableFieldPath;
 
     public Optional<PrinterColumnInfo> getPrinterColumnInfo() {
       return ofNullable(printerColumnInfo);
