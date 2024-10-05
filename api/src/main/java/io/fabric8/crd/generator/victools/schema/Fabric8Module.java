@@ -29,7 +29,6 @@ public class Fabric8Module implements Module {
     builder.forFields().withRequiredCheck(this::checkRequired);
     builder.forFields().withNumberInclusiveMinimumResolver(this::resolveNumberInclusiveMinimum);
     builder.forFields().withNumberInclusiveMaximumResolver(this::resolveNumberExclusiveMaximum);
-    //builder.forFields().withNumberExclusiveMaximumResolver(this::resolveNumberExclusiveMaximum);
     builder.forFields().withStringMinLengthResolver(this::resolveStringMinLength);
     builder.forFields().withStringMaxLengthResolver(this::resolveStringMaxLength);
     builder.forFields().withStringPatternResolver(this::resolvePattern);
@@ -49,8 +48,8 @@ public class Fabric8Module implements Module {
       return null;
     }
     return findAnnotationConsideringFieldAndGetter(member, Default.class)
-      .map(Default::value)
-      .orElse(null);
+        .map(Default::value)
+        .orElse(null);
   }
 
   private BigDecimal resolveNumberInclusiveMinimum(MemberScope<?, ?> member) {
@@ -59,16 +58,16 @@ public class Fabric8Module implements Module {
     }
     if (member.isFakeContainerItemScope()) {
       return ofNullable(
-        member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Min.class))
-        .map(io.fabric8.crd.generator.victools.annotation.Min::value)
-        .map(v -> map(member.getType().getErasedType(), v))
-        .orElse(null);
+          member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Min.class))
+          .map(io.fabric8.crd.generator.victools.annotation.Min::value)
+          .map(v -> map(member.getType().getErasedType(), v))
+          .orElse(null);
     }
 
     return findAnnotationConsideringFieldAndGetter(member, Min.class)
-      .map(Min::value)
-      .map(v -> map(member.getType().getErasedType(), v))
-      .orElse(null);
+        .map(Min::value)
+        .map(v -> map(member.getType().getErasedType(), v))
+        .orElse(null);
   }
 
   private BigDecimal resolveNumberExclusiveMaximum(MemberScope<?, ?> member) {
@@ -77,16 +76,16 @@ public class Fabric8Module implements Module {
     }
     if (member.isFakeContainerItemScope()) {
       return ofNullable(
-        member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Max.class))
-        .map(io.fabric8.crd.generator.victools.annotation.Max::value)
-        .map(v -> map(member.getType().getErasedType(), v))
-        .orElse(null);
+          member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Max.class))
+          .map(io.fabric8.crd.generator.victools.annotation.Max::value)
+          .map(v -> map(member.getType().getErasedType(), v))
+          .orElse(null);
     }
 
     return findAnnotationConsideringFieldAndGetter(member, Max.class)
-      .map(Max::value)
-      .map(v -> map(member.getType().getErasedType(), v))
-      .orElse(null);
+        .map(Max::value)
+        .map(v -> map(member.getType().getErasedType(), v))
+        .orElse(null);
   }
 
   private Integer resolveStringMaxLength(MemberScope<?, ?> member) {
@@ -95,15 +94,15 @@ public class Fabric8Module implements Module {
     }
     if (member.isFakeContainerItemScope()) {
       return ofNullable(
-        member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Max.class))
-        .map(io.fabric8.crd.generator.victools.annotation.Max::value)
-        .map(Double::intValue)
-        .orElse(null);
+          member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Max.class))
+          .map(io.fabric8.crd.generator.victools.annotation.Max::value)
+          .map(Double::intValue)
+          .orElse(null);
     }
 
     return findAnnotationConsideringFieldAndGetter(member, Max.class)
-      .map(ann -> (int) ann.value())
-      .orElse(null);
+        .map(ann -> (int) ann.value())
+        .orElse(null);
   }
 
   private Integer resolveStringMinLength(MemberScope<?, ?> member) {
@@ -112,15 +111,15 @@ public class Fabric8Module implements Module {
     }
     if (member.isFakeContainerItemScope()) {
       return ofNullable(
-        member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Min.class))
-        .map(io.fabric8.crd.generator.victools.annotation.Min::value)
-        .map(Double::intValue)
-        .orElse(null);
+          member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Min.class))
+          .map(io.fabric8.crd.generator.victools.annotation.Min::value)
+          .map(Double::intValue)
+          .orElse(null);
     }
 
     return findAnnotationConsideringFieldAndGetter(member, Min.class)
-      .map(ann -> (int) ann.value())
-      .orElse(null);
+        .map(ann -> (int) ann.value())
+        .orElse(null);
   }
 
   private String resolvePattern(MemberScope<?, ?> member) {
@@ -129,14 +128,14 @@ public class Fabric8Module implements Module {
     }
     if (member.isFakeContainerItemScope()) {
       return ofNullable(member.getContainerItemAnnotation(
-        io.fabric8.crd.generator.victools.annotation.Pattern.class))
-        .map(io.fabric8.crd.generator.victools.annotation.Pattern::value)
-        .orElse(null);
+          io.fabric8.crd.generator.victools.annotation.Pattern.class))
+          .map(io.fabric8.crd.generator.victools.annotation.Pattern::value)
+          .orElse(null);
     }
 
     return findAnnotationConsideringFieldAndGetter(member, Pattern.class)
-      .map(Pattern::value)
-      .orElse(null);
+        .map(Pattern::value)
+        .orElse(null);
   }
 
   private Boolean checkNullable(MemberScope<?, ?> member) {
@@ -152,7 +151,6 @@ public class Fabric8Module implements Module {
     }
     return findAnnotationConsideringFieldAndGetter(member, Required.class).isPresent();
   }
-
 
   private static BigDecimal map(Class<?> clazz, Double d) {
     if (clazz.isAssignableFrom(Integer.class)

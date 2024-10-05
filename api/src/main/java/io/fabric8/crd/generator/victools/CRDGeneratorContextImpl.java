@@ -16,7 +16,6 @@
 
 package io.fabric8.crd.generator.victools;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.fabric8.crd.generator.victools.spi.CRDGeneratorContext;
 import io.fabric8.kubernetes.client.utils.KubernetesSerialization;
@@ -52,10 +51,6 @@ class CRDGeneratorContextImpl implements CRDGeneratorContext, CRDGeneratorContex
         .orElseGet(ObjectMapper::new);
     this.kubernetesSerialization = ofNullable(kubernetesSerialization)
         .orElseGet(() -> new KubernetesSerialization(this.objectMapper, false));
-
-    // strips unnecessary decimal places
-    this.objectMapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
-    this.objectMapper.enable(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS);
 
     this.options = options;
   }
