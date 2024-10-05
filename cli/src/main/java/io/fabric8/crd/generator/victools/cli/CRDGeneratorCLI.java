@@ -283,7 +283,7 @@ public class CRDGeneratorCLI implements Runnable {
         .withFilenameFormat(filenameFormat)
         .withSchemaFilenameFormat(schemaFilenameFormat);
 
-    if (schemaEnabled) {
+    if (Boolean.TRUE.equals(schemaEnabled)) {
       crdGenerator.withOutputDirectory(sanitizedOutputDirectory);
     } else {
       crdGenerator.withCrdOutputDirectory(sanitizedOutputDirectory);
