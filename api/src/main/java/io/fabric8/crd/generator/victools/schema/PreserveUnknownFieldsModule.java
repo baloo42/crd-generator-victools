@@ -7,6 +7,7 @@ import com.github.victools.jsonschema.generator.CustomDefinition;
 import com.github.victools.jsonschema.generator.CustomDefinitionProviderV2;
 import com.github.victools.jsonschema.generator.CustomPropertyDefinition;
 import com.github.victools.jsonschema.generator.MemberScope;
+import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGenerationContext;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import io.fabric8.crd.generator.annotation.PreserveUnknownFields;
@@ -19,12 +20,13 @@ import java.util.Set;
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotationConsideringFieldAndGetter;
 import static io.fabric8.crd.generator.victools.spi.KubernetesSchemaKeyword.KUBERNETES_PRESERVE_UNKNOWN_FIELDS;
 
-public class PreserveUnknownFieldsModule extends AbstractCRDGeneratorModule {
+public class PreserveUnknownFieldsModule implements Module {
 
   private static final Set<Class<?>> IMPLICIT_CLASSES = Set.of(JsonNode.class);
+  private final CRDGeneratorContextInternal context;
 
   public PreserveUnknownFieldsModule(CRDGeneratorContextInternal context) {
-    super(context);
+    this.context = context;
   }
 
   @Override
@@ -60,11 +62,11 @@ public class PreserveUnknownFieldsModule extends AbstractCRDGeneratorModule {
   }
 
   private boolean hasImplicitPreserveUnknownFields(MemberScope<?, ?> scope) {
-    if (!getContext().isEnabled(CRDGeneratorSchemaOption.IMPLICIT_PRESERVE_UNKNOWN_FIELDS)) {
+    if (!context.isEnabled(CRDGeneratorSchemaOption.IMPLICIT_PRESERVE_UNKNOWN_FIELDS)) {
       return false;
     }
 
-    var beanDescription = getContext().introspect(scope.getType().getErasedType());
+    var beanDescription = context.introspect(scope.getType().getErasedType());
     return beanDescription.findAnyGetter() != null
         || beanDescription.findAnySetterAccessor() != null;
   }

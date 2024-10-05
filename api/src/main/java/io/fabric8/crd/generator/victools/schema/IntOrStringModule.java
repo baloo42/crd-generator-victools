@@ -4,10 +4,10 @@ import com.fasterxml.classmate.ResolvedType;
 import com.github.victools.jsonschema.generator.CustomDefinition;
 import com.github.victools.jsonschema.generator.CustomDefinitionProviderV2;
 import com.github.victools.jsonschema.generator.CustomPropertyDefinition;
+import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGenerationContext;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaKeyword;
-import io.fabric8.crd.generator.victools.CRDGeneratorContextInternal;
 import io.fabric8.kubernetes.api.model.IntOrString;
 import io.fabric8.kubernetes.api.model.Quantity;
 import lombok.RequiredArgsConstructor;
@@ -17,15 +17,11 @@ import java.util.Set;
 
 import static io.fabric8.crd.generator.victools.spi.KubernetesSchemaKeyword.KUBERNETES_INT_OR_STRING;
 
-public class IntOrStringModule extends AbstractCRDGeneratorModule {
+public class IntOrStringModule implements Module {
 
   private static final Set<Class<?>> IMPLICIT_CLASSES = Set.of(
       IntOrString.class,
       Quantity.class);
-
-  public IntOrStringModule(CRDGeneratorContextInternal context) {
-    super(context);
-  }
 
   @Override
   public void applyToConfigBuilder(SchemaGeneratorConfigBuilder builder) {

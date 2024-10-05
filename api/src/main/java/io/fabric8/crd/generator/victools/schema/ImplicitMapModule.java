@@ -4,11 +4,11 @@ import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.victools.jsonschema.generator.ConfigFunction;
 import com.github.victools.jsonschema.generator.MemberScope;
+import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGenerationContext;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.TypeScope;
 import com.github.victools.jsonschema.generator.impl.module.AdditionalPropertiesModule;
-import io.fabric8.crd.generator.victools.CRDGeneratorContextInternal;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -39,7 +39,7 @@ import java.util.Map;
  *   type: "object"
  * </pre>
  */
-public class ImplicitMapModule extends AbstractCRDGeneratorModule {
+public class ImplicitMapModule implements Module {
 
   private final AdditionalPropertiesModule additionalPropertiesModule;
 
@@ -51,8 +51,7 @@ public class ImplicitMapModule extends AbstractCRDGeneratorModule {
     return null;
   };
 
-  public ImplicitMapModule(CRDGeneratorContextInternal context) {
-    super(context);
+  public ImplicitMapModule() {
     additionalPropertiesModule = new AdditionalPropertiesModule(
         RESOLVER, this::createDefinitionForMemberMap, this::createDefinitionForMemberMap);
   }
