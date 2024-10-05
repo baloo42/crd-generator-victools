@@ -128,7 +128,7 @@ class CRDGeneratorApprovalTest {
     Approvals.settings().allowMultipleVerifyCallsForThisMethod();
     final Map<String, Map<String, io.fabric8.crd.generator.victools.CRDInfo>> result = new io.fabric8.crd.generator.victools.CRDGenerator()
         .withParallelGenerationEnabled(parallel)
-        .inOutputDir(tempDir)
+        .withCrdOutputDirectory(tempDir)
         .customResourceClasses(crClasses)
         .forCRDVersions(version)
         .detailedGenerate()

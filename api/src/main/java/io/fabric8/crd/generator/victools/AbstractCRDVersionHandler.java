@@ -1,9 +1,5 @@
 package io.fabric8.crd.generator.victools;
 
-import io.fabric8.kubernetes.api.model.HasMetadata;
-
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
 public abstract class AbstractCRDVersionHandler {
@@ -28,8 +24,8 @@ public abstract class AbstractCRDVersionHandler {
     customResourceHandler.handle(crdGeneratorContext, crInfo, schemaGenerator, customResourceContext);
   }
 
-  public Stream<Map.Entry<? extends HasMetadata, Set<String>>> finish() {
-    return customResourceHandler.finish();
+  public Stream<CRDResult> finish(CRDGeneratorContextInternal context) {
+    return customResourceHandler.finish(context);
   }
 
 }

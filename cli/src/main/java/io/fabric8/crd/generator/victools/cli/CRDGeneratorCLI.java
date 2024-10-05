@@ -73,9 +73,7 @@ public class CRDGeneratorCLI implements Runnable {
 
   private static final Logger log = LoggerFactory.getLogger(CRDGeneratorCLI.class);
 
-  private static final CRDGenerationInfo EMPTY_INFO = new CRDGenerationInfo();
-
-  private CRDGenerationInfo crdGenerationInfo = EMPTY_INFO;
+  private CRDGenerationInfo crdGenerationInfo = CRDGenerationInfo.EMPTY;
 
   private final Set<String> customResourceClassNames = new HashSet<>();
   private final Set<File> filesToScan = new HashSet<>();
@@ -253,7 +251,7 @@ public class CRDGeneratorCLI implements Runnable {
         .withHeader(header)
         .withLabels(labels)
         .withAnnotations(annotations)
-        .inOutputDir(sanitizedOutputDirectory);
+        .withCrdOutputDirectory(sanitizedOutputDirectory);
 
     crdGenerationInfo = crdGenerator.detailedGenerate();
     crdGenerationInfo.getCRDDetailsPerNameAndVersion().forEach((crdName, versionToInfo) -> {

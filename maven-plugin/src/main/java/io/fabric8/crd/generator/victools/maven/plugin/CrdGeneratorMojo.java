@@ -178,7 +178,7 @@ public class CrdGeneratorMojo extends AbstractMojo {
         .customResourceClasses(customResourceClassesLoaded)
         .withParallelGenerationEnabled(parallel)
         .withImplicitPreserveUnknownFields(implicitPreserveUnknownFields)
-        .inOutputDir(outputDirectory);
+        .withCrdOutputDirectory(outputDirectory);
 
     CRDGenerationInfo crdGenerationInfo = crdGenerator.detailedGenerate();
     crdGenerationInfo.getCRDDetailsPerNameAndVersion().forEach((crdName, versionToInfo) -> {
