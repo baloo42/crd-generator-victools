@@ -15,14 +15,15 @@
  */
 package io.fabric8.crd.generator.victools.v1;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.victools.jsonschema.generator.SchemaGenerator;
 import io.fabric8.crd.generator.victools.AbstractCustomResourceHandler;
 import io.fabric8.crd.generator.victools.CRDGeneratorContextInternal;
 import io.fabric8.crd.generator.victools.CRDGeneratorSchemaOption;
+import io.fabric8.crd.generator.victools.CRDResult;
 import io.fabric8.crd.generator.victools.CustomResourceContext;
 import io.fabric8.crd.generator.victools.CustomResourceInfo;
 import io.fabric8.crd.generator.victools.annotation.AdditionalPrinterColumn;
-import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceColumnDefinition;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinition;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionBuilder;
@@ -37,6 +38,7 @@ import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
@@ -139,28 +141,70 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
     crds.add(new AbstractMap.SimpleEntry<>(crd, customResourceContext.getDependentClasses()));
   }
 
+  private Collection<ValidationRule> findTopLevelValidationRules(CustomResourceInfo crInfo) {
+    return findRepeatingAnnotations(
+        crInfo.definition(),
+        io.fabric8.generator.annotation.ValidationRule.class).stream()
+        .map(CRDv1Utils::createValidationRule)
+        .toList();
+  }
+
+  private Collection<CustomResourceColumnDefinition> findTopLevelPrinterColumns(CustomResourceInfo crInfo) {
+    return findRepeatingAnnotations(crInfo.definition(), AdditionalPrinterColumn.class).stream()
+        .map(CRDv1Utils::createColumnDefinition)
+        .toList();
+  }
+
+  private Collection<CustomResourceColumnDefinition> getAdditionalPrinterColumns(
+      PrinterColumnCollector collector, CustomResourceInfo crInfo) {
+
+    return Stream.of(collector.getColumns(), findTopLevelPrinterColumns(crInfo))
+        .flatMap(Collection::stream)
+        .sorted(Comparator.comparing(CustomResourceColumnDefinition::getJsonPath))
+        .toList();
+  }
+
   /**
    * Finalizes the Custom Resource Definition by combining the versions.
    *
    * @return a stream of the produced Custom Resource Definitions
    */
   @Override
-  public Stream<Entry<? extends HasMetadata, Set<String>>> finish() {
+  public Stream<CRDResult> finish(CRDGeneratorContextInternal context) {
     return crds.stream()
         .collect(Collectors.groupingBy(crd -> crd.getKey().getMetadata().getName()))
         .values().stream()
-        .map(this::combine);
+        .map(definitions -> combine(context, definitions));
   }
 
-  private Entry<CustomResourceDefinition, Set<String>> combine(
+  private CRDResult combine(
+      CRDGeneratorContextInternal context,
       List<Entry<CustomResourceDefinition, Set<String>>> definitions) {
+
     Entry<CustomResourceDefinition, Set<String>> primary = definitions.get(0);
     if (definitions.size() == 1) {
-      return primary;
+      var version = primary.getKey().getSpec().getVersions().stream().findFirst().orElseThrow();
+      var schemas = Map.of(version.getName(), convertToJsonNode(version, context));
+      return CRDResult.builder()
+          .crd(primary.getKey())
+          .resourceGroup(getResourceGroup(primary.getKey()))
+          .resourceKind(getResourceKind(primary.getKey()))
+          .resourceSingular(getResourceSingular(primary.getKey()))
+          .resourcePlural(getResourcePlural(primary.getKey()))
+          .resourceVersions(Set.of(version.getName()))
+          .schemas(schemas)
+          .dependentClasses(primary.getValue())
+          .build();
     }
 
-    List<CustomResourceDefinitionVersion> versions = definitions.stream()
-        .flatMap(crd -> crd.getKey().getSpec().getVersions().stream())
+    List<CustomResourceDefinition> crds = definitions.stream()
+        .map(Entry::getKey)
+        .toList();
+
+    assertConsistentMetadata(crds);
+
+    List<CustomResourceDefinitionVersion> versions = crds.stream()
+        .flatMap(crd -> crd.getSpec().getVersions().stream())
         .toList();
 
     Set<String> allDependentClasses = definitions.stream()
@@ -180,38 +224,83 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
 
     versions = sortByPriority(versions, CustomResourceDefinitionVersion::getName);
 
-    //TODO: we could double check that the top-level metadata is consistent across all versions
-    return new AbstractMap.SimpleEntry<>(
-        new CustomResourceDefinitionBuilder(primary.getKey())
+    var schemas = versions.stream()
+        .collect(Collectors.toMap(CustomResourceDefinitionVersion::getName,
+            customResourceDefinitionVersion -> convertToJsonNode(customResourceDefinitionVersion, context)));
+
+    return CRDResult.builder()
+        .crd(new CustomResourceDefinitionBuilder(primary.getKey())
             .editSpec()
             .withVersions(versions)
             .endSpec()
-            .build(),
-        allDependentClasses);
+            .build())
+        .dependentClasses(allDependentClasses)
+        .schemas(schemas)
+        .resourceGroup(getResourceGroup(primary.getKey()))
+        .resourceKind(getResourceKind(primary.getKey()))
+        .resourceSingular(getResourceSingular(primary.getKey()))
+        .resourcePlural(getResourcePlural(primary.getKey()))
+        .resourceVersions(versions.stream()
+            .map(CustomResourceDefinitionVersion::getName)
+            .collect(Collectors.toSet()))
+        .build();
   }
 
-  private Collection<ValidationRule> findTopLevelValidationRules(CustomResourceInfo crInfo) {
-    return findRepeatingAnnotations(
-        crInfo.definition(),
-        io.fabric8.generator.annotation.ValidationRule.class).stream()
-        .map(CRDv1Utils::createValidationRule)
-        .toList();
+  private static JsonNode convertToJsonNode(CustomResourceDefinitionVersion version, CRDGeneratorContextInternal context) {
+    return context.convertValueToJsonNode(version.getSchema().getOpenAPIV3Schema());
   }
 
-  private Collection<CustomResourceColumnDefinition> findTopLevelPrinterColumns(CustomResourceInfo crInfo) {
-
-    return findRepeatingAnnotations(crInfo.definition(), AdditionalPrinterColumn.class).stream()
-        .map(CRDv1Utils::createColumnDefinition)
-        .toList();
+  private static String getResourceKind(CustomResourceDefinition crd) {
+    return crd.getSpec().getNames().getKind();
   }
 
-  private Collection<CustomResourceColumnDefinition> getAdditionalPrinterColumns(
-      PrinterColumnCollector collector, CustomResourceInfo crInfo) {
+  private static String getResourceGroup(CustomResourceDefinition crd) {
+    return crd.getSpec().getGroup();
+  }
 
-    return Stream.of(collector.getColumns(), findTopLevelPrinterColumns(crInfo))
-        .flatMap(Collection::stream)
-        .sorted(Comparator.comparing(CustomResourceColumnDefinition::getJsonPath))
-        .toList();
+  private static String getResourcePlural(CustomResourceDefinition crd) {
+    return crd.getSpec().getNames().getPlural();
+  }
+
+  private static String getResourceSingular(CustomResourceDefinition crd) {
+    return crd.getSpec().getNames().getSingular();
+  }
+
+  private static void assertConsistentMetadata(List<CustomResourceDefinition> crds) {
+    if (crds.isEmpty()) {
+      // should never happen
+      throw new IllegalStateException("At least one version must be generated");
+    }
+    var iterator = crds.iterator();
+    var primary = iterator.next();
+
+    while (iterator.hasNext()) {
+      var crd = iterator.next();
+
+      if (!getResourceKind(primary).equals(getResourceKind(crd))) {
+        throw new IllegalStateException(
+            "ResourceKind is not consistent across all definitions: "
+                + getResourceKind(primary) + " != " + getResourceKind(crd));
+      }
+
+      if (!getResourceGroup(primary).equals(getResourceGroup(crd))) {
+        throw new IllegalStateException(
+            "ResourceGroup is not consistent across all definitions: "
+                + getResourceGroup(primary) + " != " + getResourceGroup(crd));
+      }
+
+      if (!getResourceSingular(primary).equals(getResourceSingular(crd))) {
+        throw new IllegalStateException(
+            "ResourceSingular is not consistent across all definitions: "
+                + getResourceSingular(primary) + " != " + getResourceSingular(crd));
+      }
+
+      if (!getResourcePlural(primary).equals(getResourcePlural(crd))) {
+        throw new IllegalStateException(
+            "ResourcePlural is not consistent across all definitions: "
+                + getResourcePlural(primary) + " != " + getResourcePlural(crd));
+      }
+    }
   }
 
 }

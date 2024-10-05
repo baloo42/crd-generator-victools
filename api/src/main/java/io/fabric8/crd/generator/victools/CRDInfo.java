@@ -15,14 +15,65 @@
  */
 package io.fabric8.crd.generator.victools;
 
+import lombok.Builder;
+import lombok.NonNull;
 import lombok.Value;
 
+import java.util.Map;
 import java.util.Set;
 
 @Value
+@Builder
 public class CRDInfo {
+  /**
+   * The name of the CRD. e.g. issuers.cert-manager.io
+   */
+  @NonNull
   String crdName;
+  /**
+   * The version of the CRD spec.
+   */
+  @NonNull
   String crdSpecVersion;
+
+  /**
+   * The group of the resource, e.g. cert-manager.io
+   */
+  @NonNull
+  String resourceGroup;
+  /**
+   * The kind of the resource, e.g. Issuer
+   */
+  @NonNull
+  String resourceKind;
+  /**
+   * The resource name in singular, e.g. issuer
+   */
+  @NonNull
+  String resourceSingular;
+  /**
+   * The resource name in plural, e.g. issuers
+   */
+  @NonNull
+  String resourcePlural;
+  /**
+   * The resource versions, this CRD contains.
+   */
+  @NonNull
+  Set<String> resourceVersions;
+  /**
+   * The file path of the CRD.
+   */
+  @NonNull
   String filePath;
+  /**
+   * The file paths for the JSON-Schemas of each version.
+   */
+  @NonNull
+  Map<String, String> schemaFilePaths;
+  /**
+   * Dependent classes, used to generate this CRD.
+   */
+  @NonNull
   Set<String> dependentClassNames;
 }

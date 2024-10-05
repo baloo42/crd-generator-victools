@@ -15,16 +15,22 @@
  */
 package io.fabric8.crd.generator.victools;
 
-import java.io.File;
-import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class CRDGenerationInfo {
 
-  static final CRDGenerationInfo EMPTY = new CRDGenerationInfo();
+  public static final CRDGenerationInfo EMPTY = new CRDGenerationInfo(Collections.emptySet());
   private final Map<String, Map<String, CRDInfo>> crdNameToVersionToCRDInfoMap = new HashMap<>();
+
+  CRDGenerationInfo(Set<CRDInfo> crdInfos) {
+    for (var crdInfo : crdInfos) {
+      crdNameToVersionToCRDInfoMap.computeIfAbsent(crdInfo.getCrdName(), k -> new HashMap<>())
+          .put(crdInfo.getCrdSpecVersion(), crdInfo);
+    }
+  }
 
   public Map<String, CRDInfo> getCRDInfos(String crdName) {
     return crdNameToVersionToCRDInfoMap.get(crdName);
@@ -34,12 +40,10 @@ public class CRDGenerationInfo {
     return crdNameToVersionToCRDInfoMap;
   }
 
-  void add(String crdName, String version, URI fileURI, Set<String> dependentClassNames) {
-    crdNameToVersionToCRDInfoMap.computeIfAbsent(crdName, k -> new HashMap<>())
-        .put(version, new CRDInfo(crdName, version, new File(fileURI).getAbsolutePath(), dependentClassNames));
-  }
-
   public int numberOfGeneratedCRDs() {
-    return crdNameToVersionToCRDInfoMap.values().stream().map(Map::size).reduce(Integer::sum).orElse(0);
+    return crdNameToVersionToCRDInfoMap.values().stream()
+        .map(Map::size)
+        .reduce(Integer::sum)
+        .orElse(0);
   }
 }

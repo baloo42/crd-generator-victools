@@ -1,0 +1,44 @@
+{
+  "properties" : {
+    "spec" : {
+      "properties" : {
+        "animal" : {
+          "anyOf" : [ {
+            "properties" : {
+              "barkVolume" : {
+                "type" : "number"
+              },
+              "name" : {
+                "type" : "string"
+              },
+              "animalType" : {
+                "enum" : [ "dog" ]
+              }
+            },
+            "required" : [ "animalType" ],
+            "type" : "object"
+          }, {
+            "properties" : {
+              "lives" : {
+                "type" : "integer"
+              },
+              "name" : {
+                "type" : "string"
+              },
+              "animalType" : {
+                "enum" : [ "cat" ]
+              }
+            },
+            "required" : [ "animalType" ],
+            "type" : "object"
+          } ]
+        }
+      },
+      "type" : "object"
+    },
+    "status" : {
+      "type" : "object"
+    }
+  },
+  "type" : "object"
+}

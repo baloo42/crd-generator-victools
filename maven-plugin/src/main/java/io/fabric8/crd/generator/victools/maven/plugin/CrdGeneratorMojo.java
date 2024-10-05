@@ -31,15 +31,23 @@ import org.apache.maven.project.MavenProject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
 
-@Mojo(name = "generate", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, threadSafe = true)
+// spotless:off
+@Mojo(
+  name = "generate",
+  defaultPhase = LifecyclePhase.PROCESS_CLASSES,
+  requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME,
+  requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+  threadSafe = true
+)
+// spotless:on
 public class CrdGeneratorMojo extends AbstractMojo {
 
   @Parameter(defaultValue = "${project}", required = true, readonly = true)
@@ -124,6 +132,44 @@ public class CrdGeneratorMojo extends AbstractMojo {
   boolean implicitPreserveUnknownFields;
 
   /**
+   * The format to create the filename for the CRD files.
+   */
+  @Parameter(property = "fabric8.crd-generator.filenameFormat", defaultValue = CRDGenerator.DEFAULT_FILENAME_FORMAT)
+  String filenameFormat;
+
+  /**
+   * Enables emitting JSON-Schemas in addition to the CRDs.
+   */
+  @Parameter(property = "fabric8.crd-generator.schema", defaultValue = "false")
+  boolean schemaEnabled;
+
+  /**
+   * The format to create the filename for the JSON-Schema files.
+   */
+  @Parameter(property = "fabric8.crd-generator.schemaFilenameFormat", defaultValue = CRDGenerator.DEFAULT_SCHEMA_FILENAME_FORMAT)
+  String schemaFilenameFormat;
+
+  /**
+   * Additional labels for all CRDs. Useful to add e.g. vcs or build details.
+   */
+  @Parameter
+  Map<String, String> labels = new HashMap<>();
+
+  /**
+   * Additional annotations for all CRDs. Useful to add e.g. vcs or build details.
+   */
+  @Parameter
+  Map<String, String> annotations = new HashMap<>();
+
+  /**
+   * The header content.
+   * If not empty, this text will be added as comment on top of each CRD file.
+   * Multiline texts are supported and will be handled accordingly.
+   */
+  @Parameter(property = "fabric8.crd-generator.header", defaultValue = CRDGenerator.DEFAULT_HEADER)
+  String header;
+
+  /**
    * If {@code true}, execution will be skipped.
    */
   @Parameter(property = "fabric8.crd-generator.skip", defaultValue = "false")
@@ -178,7 +224,17 @@ public class CrdGeneratorMojo extends AbstractMojo {
         .customResourceClasses(customResourceClassesLoaded)
         .withParallelGenerationEnabled(parallel)
         .withImplicitPreserveUnknownFields(implicitPreserveUnknownFields)
-        .inOutputDir(outputDirectory);
+        .withFilenameFormat(filenameFormat)
+        .withSchemaFilenameFormat(schemaFilenameFormat)
+        .withLabels(labels)
+        .withAnnotations(annotations)
+        .withHeader(header);
+
+    if (schemaEnabled) {
+      crdGenerator.withOutputDirectory(outputDirectory);
+    } else {
+      crdGenerator.withCrdOutputDirectory(outputDirectory);
+    }
 
     CRDGenerationInfo crdGenerationInfo = crdGenerator.detailedGenerate();
     crdGenerationInfo.getCRDDetailsPerNameAndVersion().forEach((crdName, versionToInfo) -> {
@@ -196,8 +252,8 @@ public class CrdGeneratorMojo extends AbstractMojo {
   private List<File> getDependencyArchives() {
     return dependenciesToScan.stream()
         .map(this::getDependencyArchive)
-        .flatMap(o -> o.map(Stream::of).orElseGet(Stream::empty))
-        .collect(Collectors.toList());
+        .flatMap(Optional::stream)
+        .toList();
   }
 
   private Optional<File> getDependencyArchive(Dependency dependency) {

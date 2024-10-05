@@ -1,0 +1,28 @@
+{
+  "properties" : {
+    "spec" : {
+      "properties" : {
+        "classWithMapTypeAtomic" : {
+          "type" : "object",
+          "x-kubernetes-map-type" : "atomic"
+        },
+        "classWithMapTypeGranular" : {
+          "type" : "object",
+          "x-kubernetes-map-type" : "granular"
+        },
+        "mapWithMapTypeAtomic" : {
+          "additionalProperties" : {
+            "type" : "string"
+          },
+          "type" : "object",
+          "x-kubernetes-map-type" : "atomic"
+        }
+      },
+      "type" : "object"
+    },
+    "status" : {
+      "type" : "object"
+    }
+  },
+  "type" : "object"
+}

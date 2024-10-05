@@ -16,10 +16,7 @@
 package io.fabric8.crd.generator.victools;
 
 import com.github.victools.jsonschema.generator.SchemaGenerator;
-import io.fabric8.kubernetes.api.model.HasMetadata;
 
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
 public abstract class AbstractCustomResourceHandler {
@@ -30,6 +27,6 @@ public abstract class AbstractCustomResourceHandler {
       SchemaGenerator schemaGenerator,
       CustomResourceContext customResourceContext);
 
-  public abstract Stream<Map.Entry<? extends HasMetadata, Set<String>>> finish();
+  public abstract Stream<CRDResult> finish(CRDGeneratorContextInternal generatorContext);
 
 }

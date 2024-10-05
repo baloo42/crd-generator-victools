@@ -41,7 +41,7 @@ import java.util.Set;
 // spotless:off
 @CommandLine.Command(
   name = "crd-gen",
-  description = "@|bold Fabric8 CRD-Generator|@%n" +
+  description = "@|bold Fabric8 CRD-Generator (victools/jsonschema)|@%n" +
   "Generate Custom Resource Definitions (CRD) for Kubernetes from Java classes.",
   exitCodeList = {
     " 0:Successful execution",
@@ -73,9 +73,7 @@ public class CRDGeneratorCLI implements Runnable {
 
   private static final Logger log = LoggerFactory.getLogger(CRDGeneratorCLI.class);
 
-  private static final CRDGenerationInfo EMPTY_INFO = new CRDGenerationInfo();
-
-  private CRDGenerationInfo crdGenerationInfo = EMPTY_INFO;
+  private CRDGenerationInfo crdGenerationInfo = CRDGenerationInfo.EMPTY;
 
   private final Set<String> customResourceClassNames = new HashSet<>();
   private final Set<File> filesToScan = new HashSet<>();
@@ -127,6 +125,35 @@ public class CRDGeneratorCLI implements Runnable {
   )
   // spotless:on
   Boolean parallelDisabled;
+
+  // spotless:off
+  @CommandLine.Option(
+    names = {"--filename-format"},
+    description = "The format to create the filename for the CRD files.",
+    defaultValue = CRDGenerator.DEFAULT_FILENAME_FORMAT,
+    showDefaultValue = CommandLine.Help.Visibility.ALWAYS
+  )
+  // spotless:on
+  String filenameFormat;
+
+  // spotless:off
+  @CommandLine.Option(
+    names = {"--schema"},
+    description = "Enables emitting JSON-Schemas in addition to the CRDs.",
+    defaultValue = "false"
+  )
+  // spotless:on
+  Boolean schemaEnabled;
+
+  // spotless:off
+  @CommandLine.Option(
+    names = {"--schema-filename-format"},
+    description = "The format to create the filename for the JSON-Schema files.",
+    defaultValue = CRDGenerator.DEFAULT_SCHEMA_FILENAME_FORMAT,
+    showDefaultValue = CommandLine.Help.Visibility.ALWAYS
+  )
+  // spotless:on
+  String schemaFilenameFormat;
 
   // spotless:off
   @CommandLine.Option(
@@ -253,7 +280,14 @@ public class CRDGeneratorCLI implements Runnable {
         .withHeader(header)
         .withLabels(labels)
         .withAnnotations(annotations)
-        .inOutputDir(sanitizedOutputDirectory);
+        .withFilenameFormat(filenameFormat)
+        .withSchemaFilenameFormat(schemaFilenameFormat);
+
+    if (Boolean.TRUE.equals(schemaEnabled)) {
+      crdGenerator.withOutputDirectory(sanitizedOutputDirectory);
+    } else {
+      crdGenerator.withCrdOutputDirectory(sanitizedOutputDirectory);
+    }
 
     crdGenerationInfo = crdGenerator.detailedGenerate();
     crdGenerationInfo.getCRDDetailsPerNameAndVersion().forEach((crdName, versionToInfo) -> {

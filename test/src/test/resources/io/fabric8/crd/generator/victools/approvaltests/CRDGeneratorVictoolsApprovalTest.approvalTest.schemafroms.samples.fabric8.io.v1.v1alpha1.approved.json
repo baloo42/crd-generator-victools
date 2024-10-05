@@ -1,0 +1,22 @@
+{
+  "properties" : {
+    "spec" : {
+      "properties" : {
+        "foo" : {
+          "properties" : {
+            "BAZ" : {
+              "type" : "integer"
+            }
+          },
+          "required" : [ "BAZ" ],
+          "type" : "object"
+        }
+      },
+      "type" : "object"
+    },
+    "status" : {
+      "type" : "object"
+    }
+  },
+  "type" : "object"
+}
