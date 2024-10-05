@@ -9,8 +9,8 @@ import com.github.victools.jsonschema.generator.MethodScope;
 import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGenerationContext;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
-import io.fabric8.crd.generator.victools.AnnotationUtils;
 import io.fabric8.crd.generator.victools.CRDGeneratorContextInternal;
+import io.fabric8.crd.generator.victools.CRDUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
@@ -111,7 +111,7 @@ public abstract class AbstractKubernetesValidationModule<A extends Annotation, C
     if (type.getErasedType().getPackageName().startsWith("java.lang")) {
       return Collections.emptyList();
     }
-    return AnnotationUtils.findRepeatingAnnotations(type.getErasedType(), annotationClass);
+    return CRDUtils.findRepeatingAnnotations(type.getErasedType(), annotationClass);
   }
 
   private void mergeValidationRules(

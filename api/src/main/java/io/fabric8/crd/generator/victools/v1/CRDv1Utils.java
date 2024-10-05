@@ -1,16 +1,25 @@
 package io.fabric8.crd.generator.victools.v1;
 
-import io.fabric8.crd.generator.victools.annotation.AdditionalPrinterColumn;
-import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceColumnDefinition;
-import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceColumnDefinitionBuilder;
+import io.fabric8.crd.generator.victools.CustomResourceInfo;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.ValidationRule;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.ValidationRuleBuilder;
 import lombok.experimental.UtilityClass;
 
+import java.util.Collection;
+
+import static io.fabric8.crd.generator.victools.CRDUtils.findRepeatingAnnotations;
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.emptyToNull;
 
 @UtilityClass
 class CRDv1Utils {
+
+  static Collection<ValidationRule> findTopLevelValidationRules(CustomResourceInfo crInfo) {
+    return findRepeatingAnnotations(
+        crInfo.definition(),
+        io.fabric8.generator.annotation.ValidationRule.class).stream()
+        .map(CRDv1Utils::createValidationRule)
+        .toList();
+  }
 
   static ValidationRule createValidationRule(
       io.fabric8.generator.annotation.ValidationRule annotation) {
@@ -21,14 +30,6 @@ class CRDv1Utils {
         .withMessageExpression(emptyToNull(annotation.messageExpression()))
         .withOptionalOldSelf(annotation.optionalOldSelf() ? true : null)
         .withReason(emptyToNull(annotation.reason()))
-        .build();
-  }
-
-  static CustomResourceColumnDefinition createColumnDefinition(AdditionalPrinterColumn annotation) {
-    return new CustomResourceColumnDefinitionBuilder()
-        .withName(emptyToNull(annotation.name()))
-        .withJsonPath(annotation.jsonPath())
-        .withPriority(annotation.priority())
         .build();
   }
 
