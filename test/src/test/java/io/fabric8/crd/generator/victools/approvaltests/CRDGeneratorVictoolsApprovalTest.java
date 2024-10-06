@@ -23,6 +23,7 @@ import io.fabric8.crd.generator.victools.approvaltests.printercolum.PrinterColum
 import io.fabric8.crd.generator.victools.approvaltests.schemafrom.SchemaFrom;
 import io.fabric8.crd.generator.victools.approvaltests.selectablefield.SelectableField;
 import io.fabric8.crd.generator.victools.approvaltests.subtype.SubType;
+import io.fabric8.crd.generator.victools.approvaltests.validation.Validation;
 import io.fabric8.kubernetes.client.CustomResource;
 import org.approvaltests.Approvals;
 import org.approvaltests.namer.StackTraceNamer;
@@ -103,6 +104,7 @@ class CRDGeneratorVictoolsApprovalTest {
       cases.add(new TestCase("printercolumns.samples.fabric8.io", crdVersion, parallel, PrinterColumn.class));
       cases.add(new TestCase("selectablefields.samples.fabric8.io", crdVersion, parallel, SelectableField.class));
       cases.add(new TestCase("schemafroms.samples.fabric8.io", crdVersion, parallel, SchemaFrom.class));
+      cases.add(new TestCase("validations.samples.fabric8.io", crdVersion, parallel, Validation.class));
     }
     return cases.stream();
   }

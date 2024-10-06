@@ -42,3 +42,5 @@ spec:
     - jsonPath: ".spec.id"
     served: true
     storage: true
+    subresources:
+      status: {}
