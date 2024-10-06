@@ -105,6 +105,10 @@ class CRDGeneratorVictoolsApprovalTest {
       cases.add(new TestCase("selectablefields.samples.fabric8.io", crdVersion, parallel, SelectableField.class));
       cases.add(new TestCase("schemafroms.samples.fabric8.io", crdVersion, parallel, SchemaFrom.class));
       cases.add(new TestCase("validations.samples.fabric8.io", crdVersion, parallel, Validation.class));
+      cases.add(new TestCase("deprecationexamples.samples.fabric8.io", crdVersion, parallel,
+          io.fabric8.crd.generator.victools.approvaltests.deprecated.v1.DeprecationExample.class,
+          io.fabric8.crd.generator.victools.approvaltests.deprecated.v1beta1.DeprecationExample.class,
+          io.fabric8.crd.generator.victools.approvaltests.deprecated.v2.DeprecationExample.class));
     }
     return cases.stream();
   }
