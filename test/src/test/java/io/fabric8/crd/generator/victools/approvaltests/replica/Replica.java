@@ -6,7 +6,6 @@ import io.fabric8.kubernetes.model.annotation.Version;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 @Data
 @Version("v1alpha1")
 @Group("samples.fabric8.io")
