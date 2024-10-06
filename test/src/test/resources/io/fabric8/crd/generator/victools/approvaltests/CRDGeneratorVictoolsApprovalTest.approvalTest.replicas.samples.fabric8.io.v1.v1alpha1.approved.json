@@ -1,0 +1,30 @@
+{
+  "properties" : {
+    "spec" : {
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "port" : {
+          "type" : "integer"
+        },
+        "replicas" : {
+          "type" : "integer"
+        }
+      },
+      "type" : "object"
+    },
+    "status" : {
+      "properties" : {
+        "replicas" : {
+          "type" : "integer"
+        },
+        "running" : {
+          "type" : "boolean"
+        }
+      },
+      "type" : "object"
+    }
+  },
+  "type" : "object"
+}

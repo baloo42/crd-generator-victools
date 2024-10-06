@@ -60,13 +60,13 @@ public class Fabric8Module implements Module {
       return ofNullable(
           member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Min.class))
           .map(io.fabric8.crd.generator.victools.annotation.Min::value)
-          .map(v -> map(member.getType().getErasedType(), v))
+          .map(BigDecimal::valueOf)
           .orElse(null);
     }
 
     return findAnnotationConsideringFieldAndGetter(member, Min.class)
         .map(Min::value)
-        .map(v -> map(member.getType().getErasedType(), v))
+        .map(BigDecimal::valueOf)
         .orElse(null);
   }
 
@@ -78,13 +78,13 @@ public class Fabric8Module implements Module {
       return ofNullable(
           member.getContainerItemAnnotation(io.fabric8.crd.generator.victools.annotation.Max.class))
           .map(io.fabric8.crd.generator.victools.annotation.Max::value)
-          .map(v -> map(member.getType().getErasedType(), v))
+          .map(BigDecimal::valueOf)
           .orElse(null);
     }
 
     return findAnnotationConsideringFieldAndGetter(member, Max.class)
         .map(Max::value)
-        .map(v -> map(member.getType().getErasedType(), v))
+        .map(BigDecimal::valueOf)
         .orElse(null);
   }
 
@@ -140,24 +140,16 @@ public class Fabric8Module implements Module {
 
   private Boolean checkNullable(MemberScope<?, ?> member) {
     if (member.isFakeContainerItemScope()) {
-      return null;
+      return false;
     }
     return findAnnotationConsideringFieldAndGetter(member, Nullable.class).isPresent();
   }
 
   private Boolean checkRequired(MemberScope<?, ?> member) {
     if (member.isFakeContainerItemScope()) {
-      return null;
+      return false;
     }
     return findAnnotationConsideringFieldAndGetter(member, Required.class).isPresent();
-  }
-
-  private static BigDecimal map(Class<?> clazz, Double d) {
-    if (clazz.isAssignableFrom(Integer.class)
-        || clazz.isAssignableFrom(Long.class)) {
-      return BigDecimal.valueOf(d.longValue());
-    }
-    return BigDecimal.valueOf(d);
   }
 
 }
