@@ -20,6 +20,7 @@ import io.fabric8.crd.generator.victools.approvaltests.externaldocs.ExternalDoc;
 import io.fabric8.crd.generator.victools.approvaltests.k8svalidation.K8sValidation;
 import io.fabric8.crd.generator.victools.approvaltests.maptype.MapType;
 import io.fabric8.crd.generator.victools.approvaltests.printercolum.PrinterColumn;
+import io.fabric8.crd.generator.victools.approvaltests.replica.Replica;
 import io.fabric8.crd.generator.victools.approvaltests.schemafrom.SchemaFrom;
 import io.fabric8.crd.generator.victools.approvaltests.selectablefield.SelectableField;
 import io.fabric8.crd.generator.victools.approvaltests.subtype.SubType;
@@ -97,14 +98,15 @@ class CRDGeneratorVictoolsApprovalTest {
   static Stream<TestCase> crdApprovalBaseCases(String crdVersion) {
     final List<TestCase> cases = new ArrayList<>();
     for (boolean parallel : new boolean[] { false, true }) {
+      cases.add(new TestCase("validations.samples.fabric8.io", crdVersion, parallel, Validation.class));
       cases.add(new TestCase("k8svalidations.samples.fabric8.io", crdVersion, parallel, K8sValidation.class));
+      cases.add(new TestCase("replicas.samples.fabric8.io", crdVersion, parallel, Replica.class));
       cases.add(new TestCase("externaldocs.samples.fabric8.io", crdVersion, parallel, ExternalDoc.class));
       cases.add(new TestCase("maptypes.samples.fabric8.io", crdVersion, parallel, MapType.class));
       cases.add(new TestCase("subtypes.samples.fabric8.io", crdVersion, parallel, SubType.class));
       cases.add(new TestCase("printercolumns.samples.fabric8.io", crdVersion, parallel, PrinterColumn.class));
       cases.add(new TestCase("selectablefields.samples.fabric8.io", crdVersion, parallel, SelectableField.class));
       cases.add(new TestCase("schemafroms.samples.fabric8.io", crdVersion, parallel, SchemaFrom.class));
-      cases.add(new TestCase("validations.samples.fabric8.io", crdVersion, parallel, Validation.class));
       cases.add(new TestCase("deprecationexamples.samples.fabric8.io", crdVersion, parallel,
           io.fabric8.crd.generator.victools.approvaltests.deprecated.v1.DeprecationExample.class,
           io.fabric8.crd.generator.victools.approvaltests.deprecated.v1beta1.DeprecationExample.class,
