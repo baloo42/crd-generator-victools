@@ -16,7 +16,7 @@ import io.fabric8.crd.generator.victools.schema.EmbeddedResourceModule;
 import io.fabric8.crd.generator.victools.schema.ExplicitNullableModule;
 import io.fabric8.crd.generator.victools.schema.ExternalDocsModule;
 import io.fabric8.crd.generator.victools.schema.Fabric8EnumModule;
-import io.fabric8.crd.generator.victools.schema.Fabric8Module;
+import io.fabric8.crd.generator.victools.schema.Fabric8ValidationModule;
 import io.fabric8.crd.generator.victools.schema.ImplicitMapModule;
 import io.fabric8.crd.generator.victools.schema.IntOrStringModule;
 import io.fabric8.crd.generator.victools.schema.KubernetesMapTypeModule;
@@ -83,7 +83,7 @@ class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
     builder
         .with(new SchemaFromModule())
         .with(new Fabric8EnumModule())
-        .with(new Fabric8Module())
+        .with(new Fabric8ValidationModule())
         .with(new Fabric8KubernetesValidationModule(context))
         .with(new ExternalDocsModule())
         .with(new ImplicitMapModule())
