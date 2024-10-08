@@ -64,9 +64,9 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
     final var rootSchemaBuilder = new JSONSchemaPropsBuilder()
         .withType("object");
 
-    final var rootSchema = schemaGenerator.generateSchema(crInfo.definition());
+    final var rootSchemaFromGenerator = schemaGenerator.generateSchema(crInfo.definition());
 
-    rootSchema.get("properties").properties().stream()
+    rootSchemaFromGenerator.get("properties").properties().stream()
         .filter(prop -> !Set.of("metadata", "kind", "apiVersion").contains(prop.getKey()))
         .sorted(Entry.comparingByKey())
         .forEach(prop -> rootSchemaBuilder.addToProperties(prop.getKey(),
@@ -77,6 +77,7 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
     if (generatorContext.isEnabled(CRDGeneratorSchemaOption.IMPLICIT_REQUIRED_SPEC)) {
       rootSchemaBuilder.withRequired("spec");
     }
+    final var rootSchema = rootSchemaBuilder.build();
     // <<< Schema-Generation Phase ---
 
     // >>> Post-Processing Phase ---
@@ -84,10 +85,10 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
     var selectableFieldCollector = new SelectableFieldCollector(crInfo, customResourceContext);
     var scaleSubresourceCollector = new ScaleSubresourceCollector(customResourceContext);
     new PathAwareSchemaPropsVisitor()
-        .withIdentifiedPropertyVisitor(printerColumnCollector)
-        .withIdentifiedPropertyVisitor(selectableFieldCollector)
-        .withIdentifiedPropertyVisitor(scaleSubresourceCollector)
-        .visit(rootSchemaBuilder);
+        .withDirectPropertyVisitor(printerColumnCollector)
+        .withDirectPropertyVisitor(selectableFieldCollector)
+        .withDirectPropertyVisitor(scaleSubresourceCollector)
+        .visit(rootSchema);
 
     CustomResourceDefinitionVersionBuilder builder = new CustomResourceDefinitionVersionBuilder()
         .withName(version)
@@ -96,7 +97,7 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
         .withDeprecated(crInfo.deprecated() ? true : null)
         .withDeprecationWarning(crInfo.deprecationWarning())
         .withNewSchema()
-        .withOpenAPIV3Schema(rootSchemaBuilder.build())
+        .withOpenAPIV3Schema(rootSchema)
         .endSchema();
 
     builder.addAllToAdditionalPrinterColumns(printerColumnCollector.getColumns());

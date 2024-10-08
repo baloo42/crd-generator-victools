@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Set;
 
-import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotationConsideringFieldAndGetter;
+import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotationOnFieldAndGetter;
 import static io.fabric8.crd.generator.victools.spi.KubernetesSchemaKeyword.KUBERNETES_PRESERVE_UNKNOWN_FIELDS;
 
 public class PreserveUnknownFieldsModule implements Module {
@@ -57,7 +57,7 @@ public class PreserveUnknownFieldsModule implements Module {
   }
 
   private boolean hasPreserveUnknownFieldsAnnotation(MemberScope<?, ?> scope) {
-    return findAnnotationConsideringFieldAndGetter(scope, PreserveUnknownFields.class)
+    return findAnnotationOnFieldAndGetter(scope, PreserveUnknownFields.class)
         .isPresent();
   }
 

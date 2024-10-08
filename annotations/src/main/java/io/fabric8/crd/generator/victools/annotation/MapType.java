@@ -22,6 +22,9 @@ public @interface MapType {
    */
   Type value() default Type.GRANULAR;
 
+  /**
+   * The Kubernetes Map Type
+   */
   enum Type {
     /**
      * These maps are actual maps (key-value pairs) and each field is independent

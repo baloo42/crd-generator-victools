@@ -13,11 +13,21 @@ import java.lang.annotation.Target;
  *      Kubernetes Docs - API Reference - CRD v1 - JSONSchemaProps
  *      </a>
  *
- * @deprecated This annotation is only a temporary solution until kubernetes-client v7 is released.
  */
-@Deprecated(forRemoval = true)
 @Target({ ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Min {
+  /**
+   * @return the element must be higher or equal to
+   */
   double value();
+
+  /**
+   * Specifies whether the specified minimum is inclusive or exclusive.
+   * By default, it is inclusive.
+   *
+   * @return {@code true} if the value must be higher or equal to the specified minimum,
+   *         {@code false} if the value must be higher
+   */
+  boolean inclusive() default true;
 }
