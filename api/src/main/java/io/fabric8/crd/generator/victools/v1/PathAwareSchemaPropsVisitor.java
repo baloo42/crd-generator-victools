@@ -1,7 +1,6 @@
 package io.fabric8.crd.generator.victools.v1;
 
 import io.fabric8.kubernetes.api.model.apiextensions.v1.JSONSchemaProps;
-import io.fabric8.kubernetes.api.model.apiextensions.v1.JSONSchemaPropsBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,35 +26,78 @@ import static java.util.Optional.ofNullable;
 @RequiredArgsConstructor
 class PathAwareSchemaPropsVisitor {
 
+  private static final String JSONPATH_SEPERATOR = ".";
+  private static final String JSONPATH_SEPERATOR_ARRAY = "[]";
+
   private final List<PropertyVisitor> propertyVisitors = new LinkedList<>();
   private final List<IdentifiedPropertyVisitor> identifiedPropertyVisitors = new LinkedList<>();
+  private final List<PropertyVisitor> directPropertyVisitors = new LinkedList<>();
+  private final List<IdentifiedPropertyVisitor> directIdentifiedPropertyVisitors = new LinkedList<>();
 
-  public PathAwareSchemaPropsVisitor withPropertyVisitor(PropertyVisitor visitors) {
-    this.propertyVisitors.add(visitors);
+  /**
+   * Registers a visitor, which visits every property.
+   *
+   * @param visitor the visitor
+   * @return this instance, for chaining.
+   */
+  public PathAwareSchemaPropsVisitor withPropertyVisitor(PropertyVisitor visitor) {
+    this.propertyVisitors.add(visitor);
     return this;
   }
 
-  public PathAwareSchemaPropsVisitor withIdentifiedPropertyVisitor(IdentifiedPropertyVisitor visitors) {
-    this.identifiedPropertyVisitors.add(visitors);
+  /**
+   * Registers a visitor, which visits every identified property.
+   *
+   * @param visitor the visitor
+   * @return this instance, for chaining.
+   */
+  public PathAwareSchemaPropsVisitor withPropertyVisitor(IdentifiedPropertyVisitor visitor) {
+    this.identifiedPropertyVisitors.add(visitor);
     return this;
   }
 
-  public void visit(JSONSchemaPropsBuilder schema) {
+  /**
+   * Registers a visitor, which visits every direct property (JSON Path from root contains no array).
+   *
+   * @param visitor the visitor
+   * @return this instance, for chaining.
+   */
+  public PathAwareSchemaPropsVisitor withDirectPropertyVisitor(PropertyVisitor visitor) {
+    this.directPropertyVisitors.add(visitor);
+    return this;
+  }
+
+  /**
+   * Registers a visitor, which visits every identified direct property (JSON Path from root contains no array).
+   *
+   * @param visitor the visitor
+   * @return this instance, for chaining.
+   */
+  public PathAwareSchemaPropsVisitor withDirectPropertyVisitor(IdentifiedPropertyVisitor visitor) {
+    this.directIdentifiedPropertyVisitors.add(visitor);
+    return this;
+  }
+
+  public void visit(JSONSchemaProps schema) {
     visit("", schema);
   }
 
-  private void visit(String parentPath, JSONSchemaPropsBuilder schema) {
+  private void visit(String parentPath, JSONSchemaProps schema) {
     if ("object".equals(schema.getType())) {
       for (var prop : schema.getProperties().entrySet()) {
-        var fieldPath = parentPath + "." + prop.getKey();
-        var fieldSchema = prop.getValue();
-        visitField(fieldPath, fieldSchema);
-        visit(fieldPath, fieldSchema.edit());
+        var propPath = parentPath + JSONPATH_SEPERATOR + prop.getKey();
+        var propSchema = prop.getValue();
+        visitProperty(propPath, propSchema);
+        visit(propPath, propSchema);
       }
+    } else if ("array".equals(schema.getType())) {
+      var path = parentPath + JSONPATH_SEPERATOR_ARRAY;
+      var itemSchema = schema.getItems().getSchema();
+      visit(path, itemSchema);
     }
   }
 
-  private void visitField(String path, JSONSchemaProps schema) {
+  private void visitProperty(String path, JSONSchemaProps schema) {
     onFieldProperty(path, schema);
     ofNullable(schema.getId())
         .ifPresent(id -> onIdentifiedFieldProperty(id, path, schema));
@@ -63,6 +105,9 @@ class PathAwareSchemaPropsVisitor {
 
   private void onFieldProperty(String path, JSONSchemaProps schema) {
     propertyVisitors.forEach(v -> v.visit(path, schema));
+    if (isDirectPath(path)) {
+      directPropertyVisitors.forEach(v -> v.visit(path, schema));
+    }
   }
 
   private void onIdentifiedFieldProperty(String id, String path, JSONSchemaProps schema) {
@@ -70,6 +115,9 @@ class PathAwareSchemaPropsVisitor {
     schema.setId(null);
     // execute registered visitors
     identifiedPropertyVisitors.forEach(v -> v.visit(id, path, schema));
+    if (isDirectPath(path)) {
+      directIdentifiedPropertyVisitors.forEach(v -> v.visit(id, path, schema));
+    }
   }
 
   @FunctionalInterface
@@ -82,4 +130,7 @@ class PathAwareSchemaPropsVisitor {
     void visit(String id, String path, JSONSchemaProps schema);
   }
 
+  private static boolean isDirectPath(String path) {
+    return !path.contains(JSONPATH_SEPERATOR_ARRAY);
+  }
 }
