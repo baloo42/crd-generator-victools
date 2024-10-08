@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotation;
-import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotationConsideringFieldAndGetter;
+import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotationOnFieldAndGetter;
 
 public class KubernetesMapTypeModule implements Module {
 
@@ -56,6 +56,6 @@ public class KubernetesMapTypeModule implements Module {
   }
 
   private Optional<MapType> findMapTypeAnnotation(MemberScope<?, ?> scope) {
-    return findAnnotationConsideringFieldAndGetter(scope, MapType.class);
+    return findAnnotationOnFieldAndGetter(scope, MapType.class);
   }
 }

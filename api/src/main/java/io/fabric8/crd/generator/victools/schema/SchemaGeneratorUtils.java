@@ -41,7 +41,7 @@ public class SchemaGeneratorUtils {
     return Optional.ofNullable(member.getAnnotation(clazz));
   }
 
-  public static <A extends Annotation> Optional<A> findAnnotationConsideringFieldAndGetter(
+  public static <A extends Annotation> Optional<A> findAnnotationOnFieldAndGetter(
       MemberScope<?, ?> member,
       Class<A> clazz) {
 

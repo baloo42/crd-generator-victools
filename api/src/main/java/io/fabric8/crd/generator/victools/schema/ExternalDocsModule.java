@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.emptyToNull;
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotation;
-import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotationConsideringFieldAndGetter;
+import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotationOnFieldAndGetter;
 
 public class ExternalDocsModule implements Module {
 
@@ -59,7 +59,7 @@ public class ExternalDocsModule implements Module {
   }
 
   private Optional<ExternalDocs> findExternalDocsAnnotation(MemberScope<?, ?> scope) {
-    return findAnnotationConsideringFieldAndGetter(scope, ExternalDocs.class);
+    return findAnnotationOnFieldAndGetter(scope, ExternalDocs.class);
   }
 
   private record ExternalDocsInfo(String description, String url) {
