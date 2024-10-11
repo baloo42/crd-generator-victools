@@ -25,7 +25,7 @@ import java.util.List;
  * <li>The name of an enum value can be overridden, if the value is annotated with {@link JsonProperty}.</li>
  * </ul>
  */
-public class Fabric8EnumModule implements Module {
+public class JacksonEnumModule implements Module {
 
   @Override
   public void applyToConfigBuilder(SchemaGeneratorConfigBuilder builder) {

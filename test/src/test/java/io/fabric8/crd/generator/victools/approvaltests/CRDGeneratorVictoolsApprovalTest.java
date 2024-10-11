@@ -24,6 +24,7 @@ import io.fabric8.crd.generator.victools.approvaltests.replica.Replica;
 import io.fabric8.crd.generator.victools.approvaltests.schemafrom.SchemaFrom;
 import io.fabric8.crd.generator.victools.approvaltests.selectablefield.SelectableField;
 import io.fabric8.crd.generator.victools.approvaltests.subtype.SubType;
+import io.fabric8.crd.generator.victools.approvaltests.validation.FkcValidation;
 import io.fabric8.crd.generator.victools.approvaltests.validation.Validation;
 import io.fabric8.kubernetes.client.CustomResource;
 import org.approvaltests.Approvals;
@@ -99,6 +100,7 @@ class CRDGeneratorVictoolsApprovalTest {
     final List<TestCase> cases = new ArrayList<>();
     for (boolean parallel : new boolean[] { false, true }) {
       cases.add(new TestCase("validations.samples.fabric8.io", crdVersion, parallel, Validation.class));
+      cases.add(new TestCase("fkcvalidations.samples.fabric8.io", crdVersion, parallel, FkcValidation.class));
       cases.add(new TestCase("k8svalidations.samples.fabric8.io", crdVersion, parallel, K8sValidation.class));
       cases.add(new TestCase("replicas.samples.fabric8.io", crdVersion, parallel, Replica.class));
       cases.add(new TestCase("externaldocs.samples.fabric8.io", crdVersion, parallel, ExternalDoc.class));

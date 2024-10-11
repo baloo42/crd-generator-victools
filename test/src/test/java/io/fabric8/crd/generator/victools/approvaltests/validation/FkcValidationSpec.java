@@ -1,15 +1,15 @@
 package io.fabric8.crd.generator.victools.approvaltests.validation;
 
-import io.fabric8.crd.generator.victools.annotation.Max;
-import io.fabric8.crd.generator.victools.annotation.Min;
-import io.fabric8.crd.generator.victools.annotation.Pattern;
+import io.fabric8.generator.annotation.Max;
+import io.fabric8.generator.annotation.Min;
+import io.fabric8.generator.annotation.Pattern;
 import lombok.Data;
 
 /**
- * Tests for own validation annotations
+ * Tests for Fabric8 validation annotations
  */
 @Data
-public class ValidationSpec {
+public class FkcValidationSpec {
 
   private ValidationOnInteger onInteger;
   private ValidationOnIntegerPrim onIntegerPrim;
