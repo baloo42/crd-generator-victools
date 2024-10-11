@@ -15,10 +15,10 @@ import io.fabric8.crd.generator.victools.schema.ConstToEnumInAllOfModule;
 import io.fabric8.crd.generator.victools.schema.EmbeddedResourceModule;
 import io.fabric8.crd.generator.victools.schema.ExplicitNullableModule;
 import io.fabric8.crd.generator.victools.schema.ExternalDocsModule;
-import io.fabric8.crd.generator.victools.schema.Fabric8EnumModule;
-import io.fabric8.crd.generator.victools.schema.Fabric8ValidationModule;
+import io.fabric8.crd.generator.victools.schema.FkcValidationModule;
 import io.fabric8.crd.generator.victools.schema.ImplicitMapModule;
 import io.fabric8.crd.generator.victools.schema.IntOrStringModule;
+import io.fabric8.crd.generator.victools.schema.JacksonEnumModule;
 import io.fabric8.crd.generator.victools.schema.KubernetesMapTypeModule;
 import io.fabric8.crd.generator.victools.schema.MetadataModule;
 import io.fabric8.crd.generator.victools.schema.PreserveUnknownFieldsModule;
@@ -83,10 +83,10 @@ class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
 
     builder
         .with(new SchemaFromModule())
-        .with(new Fabric8EnumModule())
+        .with(new JacksonEnumModule())
         .with(new ValidationModule())
-        .with(new Fabric8ValidationModule())
-        .with(new Fabric8KubernetesValidationModule(context))
+        .with(new FkcValidationModule())
+        .with(new FkcKubernetesValidationModule(context))
         .with(new ExternalDocsModule())
         .with(new ImplicitMapModule())
         .with(new PreserveUnknownFieldsModule(context))

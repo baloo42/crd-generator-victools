@@ -1,5 +1,7 @@
 package io.fabric8.crd.generator.victools.schema;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.victools.jsonschema.generator.MemberScope;
 import io.fabric8.generator.annotation.Default;
 import io.fabric8.generator.annotation.Max;
@@ -18,15 +20,16 @@ import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.find
  * Module for common validation constraints, declared by Fabric8 annotations.
  */
 @Slf4j
-public class Fabric8ValidationModule extends AbstractValidationModule {
+public class FkcValidationModule extends AbstractValidationModule {
 
   @Override
-  protected Object resolveDefault(MemberScope<?, ?> member) {
+  protected Object resolveDefault(MemberScope<?, ?> member, ObjectMapper objectMapper) {
     if (member.isFakeContainerItemScope()) {
       return null;
     }
     return findAnnotationOnFieldAndGetter(member, Default.class)
         .map(Default::value)
+        .map(s -> objectMapper.convertValue(s, JsonNode.class))
         .orElse(null);
   }
 
@@ -48,13 +51,13 @@ public class Fabric8ValidationModule extends AbstractValidationModule {
 
   @Override
   protected BigDecimal resolveNumberInclusiveMinimum(MemberScope<?, ?> member) {
-    if (member.getType().getErasedType().equals(Character.class)) {
-      return null;
+    if (!member.getType().isInstanceOf(CharSequence.class)) {
+      return findAnnotationOnFieldGetterContainerItem(member, Min.class)
+          .map(Min::value)
+          .map(BigDecimal::valueOf)
+          .orElse(null);
     }
-    return findAnnotationOnFieldGetterContainerItem(member, Min.class)
-        .map(Min::value)
-        .map(BigDecimal::valueOf)
-        .orElse(null);
+    return null;
   }
 
   @Override
@@ -65,13 +68,13 @@ public class Fabric8ValidationModule extends AbstractValidationModule {
 
   @Override
   protected BigDecimal resolveNumberInclusiveMaximum(MemberScope<?, ?> member) {
-    if (member.getType().getErasedType().equals(Character.class)) {
-      return null;
+    if (!member.getType().isInstanceOf(CharSequence.class)) {
+      return findAnnotationOnFieldGetterContainerItem(member, Max.class)
+          .map(Max::value)
+          .map(BigDecimal::valueOf)
+          .orElse(null);
     }
-    return findAnnotationOnFieldGetterContainerItem(member, Max.class)
-        .map(Max::value)
-        .map(BigDecimal::valueOf)
-        .orElse(null);
+    return null;
   }
 
   @Override
@@ -93,11 +96,7 @@ public class Fabric8ValidationModule extends AbstractValidationModule {
   @Override
   protected Integer resolveArrayMinItems(MemberScope<?, ?> member) {
     if (member.isContainerType()) {
-      return findAnnotationOnFieldGetterContainerItem(member, Min.class)
-          .map(Min::value)
-          .map(Double::intValue)
-          .filter(min -> min > 0)
-          .orElse(null);
+      // TODO: not yet supported
     }
     return null;
   }
@@ -105,11 +104,7 @@ public class Fabric8ValidationModule extends AbstractValidationModule {
   @Override
   protected Integer resolveArrayMaxItems(MemberScope<?, ?> member) {
     if (member.isContainerType()) {
-      return findAnnotationOnFieldGetterContainerItem(member, Max.class)
-          .map(Max::value)
-          .filter(max -> max < Integer.MAX_VALUE)
-          .map(Double::intValue)
-          .orElse(null);
+      // TODO: not yet supported
     }
     return null;
   }
@@ -117,11 +112,7 @@ public class Fabric8ValidationModule extends AbstractValidationModule {
   @Override
   protected Integer resolveStringMinLength(MemberScope<?, ?> member) {
     if (member.getType().isInstanceOf(CharSequence.class)) {
-      return findAnnotationOnFieldGetterContainerItem(member, Min.class)
-          .map(Min::value)
-          .map(Double::intValue)
-          .filter(min -> min > 0)
-          .orElse(null);
+      // TODO: not yet supported
     }
     return null;
   }
@@ -129,31 +120,21 @@ public class Fabric8ValidationModule extends AbstractValidationModule {
   @Override
   protected Integer resolveStringMaxLength(MemberScope<?, ?> member) {
     if (member.getType().isInstanceOf(CharSequence.class)) {
-      return findAnnotationOnFieldGetterContainerItem(member, Max.class)
-          .map(Max::value)
-          .filter(max -> max < Integer.MAX_VALUE)
-          .map(Double::intValue)
-          .orElse(null);
+      // TODO: not yet supported
     }
     return null;
   }
 
   @Override
   protected Integer resolveMapMinEntries(MemberScope<?, ?> member) {
-    return findAnnotationOnFieldGetterContainerItem(member, Min.class)
-        .map(Min::value)
-        .map(Double::intValue)
-        .filter(min -> min > 0)
-        .orElse(null);
+    // TODO: not yet supported
+    return null;
   }
 
   @Override
   protected Integer resolveMapMaxEntries(MemberScope<?, ?> member) {
-    return findAnnotationOnFieldGetterContainerItem(member, Max.class)
-        .map(Max::value)
-        .filter(max -> max < Integer.MAX_VALUE)
-        .map(Double::intValue)
-        .orElse(null);
+    // TODO: not yet supported
+    return null;
   }
 
 }

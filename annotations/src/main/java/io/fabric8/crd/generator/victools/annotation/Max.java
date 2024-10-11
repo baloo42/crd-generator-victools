@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  *      </a>
  *
  */
-@Target({ ElementType.TYPE_USE })
+@Target({ ElementType.ANNOTATION_TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Max {
   /**

@@ -1,6 +1,7 @@
 package io.fabric8.crd.generator.victools.schema;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.victools.jsonschema.generator.MemberScope;
 import com.github.victools.jsonschema.generator.Module;
@@ -16,7 +17,7 @@ public abstract class AbstractValidationModule implements Module {
   @Override
   public void applyToConfigBuilder(SchemaGeneratorConfigBuilder builder) {
     // fields
-    builder.forFields().withDefaultResolver(this::resolveDefault);
+    builder.forFields().withDefaultResolver(target -> resolveDefault(target, builder.getObjectMapper()));
     builder.forFields().withNullableCheck(this::checkNullable);
     builder.forFields().withRequiredCheck(this::checkRequired);
 
@@ -35,7 +36,7 @@ public abstract class AbstractValidationModule implements Module {
     builder.forFields().withInstanceAttributeOverride(this::overrideInstanceAttributes);
 
     // methods
-    builder.forMethods().withDefaultResolver(this::resolveDefault);
+    builder.forMethods().withDefaultResolver(target -> resolveDefault(target, builder.getObjectMapper()));
     builder.forMethods().withNullableCheck(this::checkNullable);
     builder.forMethods().withRequiredCheck(this::checkRequired);
 
@@ -54,7 +55,7 @@ public abstract class AbstractValidationModule implements Module {
     builder.forMethods().withInstanceAttributeOverride(this::overrideInstanceAttributes);
   }
 
-  protected abstract Object resolveDefault(MemberScope<?, ?> member);
+  protected abstract Object resolveDefault(MemberScope<?, ?> member, ObjectMapper objectMapper);
 
   protected abstract Boolean checkNullable(MemberScope<?, ?> member);
 

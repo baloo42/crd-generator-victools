@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  *      Kubernetes Docs - API Reference - CRD v1 - JSONSchemaProps
  *      </a>
  */
-@Target({ ElementType.TYPE_USE })
+@Target({ ElementType.ANNOTATION_TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Pattern {
   String value();

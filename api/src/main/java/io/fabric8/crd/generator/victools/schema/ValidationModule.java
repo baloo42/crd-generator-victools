@@ -1,5 +1,7 @@
 package io.fabric8.crd.generator.victools.schema;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.victools.jsonschema.generator.MemberScope;
 import io.fabric8.crd.generator.victools.annotation.Default;
 import io.fabric8.crd.generator.victools.annotation.Max;
@@ -23,12 +25,13 @@ import static java.util.function.Predicate.not;
 public class ValidationModule extends AbstractValidationModule {
 
   @Override
-  protected Object resolveDefault(MemberScope<?, ?> member) {
+  protected Object resolveDefault(MemberScope<?, ?> member, ObjectMapper objectMapper) {
     if (member.isFakeContainerItemScope()) {
       return null;
     }
     return findAnnotationOnFieldAndGetter(member, Default.class)
         .map(Default::value)
+        .map(s -> objectMapper.convertValue(s, JsonNode.class))
         .orElse(null);
   }
 
@@ -50,50 +53,52 @@ public class ValidationModule extends AbstractValidationModule {
 
   @Override
   protected BigDecimal resolveNumberInclusiveMinimum(MemberScope<?, ?> member) {
-    if (member.getType().getErasedType().equals(Character.class)) {
-      return null;
+    if (!member.getType().isInstanceOf(CharSequence.class)) {
+      var res = findAnnotationOnFieldGetterContainerItem(member, Min.class)
+          .filter(Min::inclusive)
+          .map(Min::value)
+          .map(BigDecimal::valueOf)
+          .orElse(null);
+
+      return res;
     }
-    return findAnnotationOnFieldGetterContainerItem(member, Min.class)
-        .filter(Min::inclusive)
-        .map(Min::value)
-        .map(BigDecimal::valueOf)
-        .orElse(null);
+    return null;
   }
 
   @Override
   protected BigDecimal resolveNumberExclusiveMinimum(MemberScope<?, ?> member) {
-    if (member.getType().getErasedType().equals(Character.class)) {
-      return null;
+    if (!member.getType().isInstanceOf(CharSequence.class)) {
+      return findAnnotationOnFieldGetterContainerItem(member, Min.class)
+          .filter(not(Min::inclusive))
+          .map(Min::value)
+          .map(BigDecimal::valueOf)
+          .orElse(null);
     }
-    return findAnnotationOnFieldGetterContainerItem(member, Min.class)
-        .filter(not(Min::inclusive))
-        .map(Min::value)
-        .map(BigDecimal::valueOf)
-        .orElse(null);
+    return null;
   }
 
   @Override
   protected BigDecimal resolveNumberInclusiveMaximum(MemberScope<?, ?> member) {
-    if (member.getType().getErasedType().equals(Character.class)) {
-      return null;
+    if (!member.getType().isInstanceOf(CharSequence.class)) {
+      return findAnnotationOnFieldGetterContainerItem(member, Max.class)
+          .filter(Max::inclusive)
+          .map(Max::value)
+          .map(BigDecimal::valueOf)
+          .orElse(null);
     }
-    return findAnnotationOnFieldGetterContainerItem(member, Max.class)
-        .filter(Max::inclusive)
-        .map(Max::value)
-        .map(BigDecimal::valueOf)
-        .orElse(null);
+    return null;
   }
 
   @Override
   protected BigDecimal resolveNumberExclusiveMaximum(MemberScope<?, ?> member) {
-    if (member.getType().getErasedType().equals(Character.class)) {
-      return null;
+    if (!member.getType().isInstanceOf(CharSequence.class)) {
+      return findAnnotationOnFieldGetterContainerItem(member, Max.class)
+          .filter(not(Max::inclusive))
+          .map(Max::value)
+          .map(BigDecimal::valueOf)
+          .orElse(null);
     }
-    return findAnnotationOnFieldGetterContainerItem(member, Max.class)
-        .filter(not(Max::inclusive))
-        .map(Max::value)
-        .map(BigDecimal::valueOf)
-        .orElse(null);
+    return null;
   }
 
   @Override
