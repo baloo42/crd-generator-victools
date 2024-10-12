@@ -12,7 +12,7 @@ import io.fabric8.crd.generator.victools.spi.KubernetesSchemaKeyword;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.emptyToNull;
+import static io.fabric8.crd.generator.victools.CRDUtils.emptyToNull;
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotation;
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotationOnFieldAndGetter;
 

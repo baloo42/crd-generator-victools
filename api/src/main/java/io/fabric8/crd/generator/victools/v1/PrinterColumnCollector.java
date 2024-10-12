@@ -17,8 +17,8 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static io.fabric8.crd.generator.victools.CRDUtils.distinctByKey;
+import static io.fabric8.crd.generator.victools.CRDUtils.emptyToNull;
 import static io.fabric8.crd.generator.victools.CRDUtils.findRepeatingAnnotations;
-import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.emptyToNull;
 
 class PrinterColumnCollector implements PathAwareSchemaPropsVisitor.IdentifiedPropertyVisitor {
 

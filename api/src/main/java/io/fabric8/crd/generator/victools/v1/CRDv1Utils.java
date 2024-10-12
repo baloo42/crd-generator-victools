@@ -7,8 +7,8 @@ import lombok.experimental.UtilityClass;
 
 import java.util.Collection;
 
+import static io.fabric8.crd.generator.victools.CRDUtils.emptyToNull;
 import static io.fabric8.crd.generator.victools.CRDUtils.findRepeatingAnnotations;
-import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.emptyToNull;
 
 @UtilityClass
 class CRDv1Utils {
