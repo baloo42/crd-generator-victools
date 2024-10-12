@@ -50,7 +50,7 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
   private record CrdEntry(CustomResourceDefinition crd, Set<String> dependentClasses) {
   }
 
-  private final Queue<CrdEntry> crds = new ConcurrentLinkedQueue<>();
+  private final Queue<CrdEntry> crdQueue = new ConcurrentLinkedQueue<>();
 
   @Override
   public void handle(
@@ -143,7 +143,7 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
     CustomResourceDefinition crd = crdBuilder.build();
     // <<< Post-Processing Phase ---
 
-    crds.add(new CrdEntry(crd, customResourceContext.getDependentClasses()));
+    crdQueue.add(new CrdEntry(crd, customResourceContext.getDependentClasses()));
   }
 
   /**
@@ -153,20 +153,32 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
    */
   @Override
   public Stream<CRDResult> finish(CRDGeneratorContextInternal context) {
-    return crds.stream()
-        .collect(Collectors.groupingBy(entry -> entry.crd().getMetadata().getName()))
+    return crdQueue.stream()
+        .collect(Collectors.groupingBy(entry -> getName(entry.crd())))
         .values().stream()
+        .peek(CustomResourceHandler::assertOneVersionPerDefinition)
         .map(CustomResourceHandler::sortByVersion)
-        .map(definitions -> combine(context, definitions));
+        .map(crdEntries -> combine(context, crdEntries));
   }
 
+  /**
+   * Combines multiple CrdEntries of the same Custom Resource kind to the final CRD.
+   *
+   * @param context the generator context.
+   * @param crdEntries the list of CrdEntries to combine.
+   * @return the resulting CRD and metadata.
+   */
   private CRDResult combine(
       CRDGeneratorContextInternal context,
-      List<CrdEntry> definitions) {
-
-    var primary = definitions.get(0);
-    if (definitions.size() == 1) {
-      var version = primary.crd().getSpec().getVersions().stream().findFirst().orElseThrow();
+      List<CrdEntry> crdEntries) {
+    // At this stage it is ensured that:
+    // - each entry contains only one version
+    // - the entries are sorted by version
+    // - the first entry contains the latest version (--> primary)
+    var primary = crdEntries.get(0);
+    if (crdEntries.size() == 1) {
+      // no combining necessary
+      var version = getFirstVersion(primary.crd());
       var schemas = Map.of(version.getName(), convertToJsonNode(version, context));
       return CRDResult.builder()
           .crd(primary.crd())
@@ -180,7 +192,7 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
           .build();
     }
 
-    List<CustomResourceDefinition> crds = definitions.stream()
+    List<CustomResourceDefinition> crds = crdEntries.stream()
         .map(CrdEntry::crd)
         .toList();
 
@@ -190,9 +202,9 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
         .flatMap(crd -> crd.getSpec().getVersions().stream())
         .toList();
 
-    assertSingleStorageVersion(versions, primary.crd().getMetadata().getName());
+    assertSingleStorageVersion(versions, getName(primary.crd()));
 
-    Set<String> allDependentClasses = definitions.stream()
+    Set<String> allDependentClasses = crdEntries.stream()
         .flatMap(crd -> crd.dependentClasses().stream())
         .collect(Collectors.toSet());
 
@@ -203,7 +215,6 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
     return CRDResult.builder()
         .crd(new CustomResourceDefinitionBuilder(primary.crd())
             .editSpec()
-            .withConversion(primary.crd().getSpec().getConversion())
             .withVersions(versions)
             .endSpec()
             .build())
@@ -219,13 +230,12 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
         .build();
   }
 
-  private static List<CrdEntry> sortByVersion(List<CrdEntry> definitions) {
-    return sortByPriority(definitions, entry -> entry.crd()
-        .getSpec().getVersions().stream().findFirst().orElseThrow().getName());
-  }
-
   private static JsonNode convertToJsonNode(CustomResourceDefinitionVersion version, CRDGeneratorContextInternal context) {
     return context.convertValueToJsonNode(version.getSchema().getOpenAPIV3Schema());
+  }
+
+  private static String getName(CustomResourceDefinition crd) {
+    return crd.getMetadata().getName();
   }
 
   private static String getResourceKind(CustomResourceDefinition crd) {
@@ -242,6 +252,27 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
 
   private static String getResourceSingular(CustomResourceDefinition crd) {
     return crd.getSpec().getNames().getSingular();
+  }
+
+  private static CustomResourceDefinitionVersion getFirstVersion(CustomResourceDefinition crd) {
+    return crd.getSpec().getVersions().stream().findFirst().orElseThrow();
+  }
+
+  private static List<CrdEntry> sortByVersion(List<CrdEntry> definitions) {
+    return sortByPriority(definitions, entry -> getFirstVersion(entry.crd()).getName());
+  }
+
+  private static void assertOneVersionPerDefinition(List<CrdEntry> definitions) {
+    for (CrdEntry entry : definitions) {
+      if (entry.crd().getSpec().getVersions() == null) {
+        throw new IllegalStateException("CrdEntry contains no version");
+      }
+      if (entry.crd().getSpec().getVersions().size() != 1) {
+        throw new IllegalStateException(
+            "CrdEntry contains %s versions. At this stage exactly one is expected.".formatted(
+                entry.crd().getSpec().getVersions().size()));
+      }
+    }
   }
 
   private static void assertSingleStorageVersion(List<CustomResourceDefinitionVersion> versions, String crdName) {
