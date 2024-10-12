@@ -23,6 +23,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WebhookConversion {
+  /**
+   * The name of this strategy.
+   */
+  String NAME = "Webhook";
 
   /**
    * The ConversionReviewVersions.

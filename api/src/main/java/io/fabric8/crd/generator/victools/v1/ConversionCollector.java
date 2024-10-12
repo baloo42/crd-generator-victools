@@ -17,9 +17,7 @@ import static java.util.Optional.ofNullable;
 
 class ConversionCollector {
 
-  private static final String ERROR_MSG_WEBHOOKCONVERSION_PREFIX = "Invalid WebhookConversion configuration: ";
-  private static final String NONE_STRATEGY = "None";
-  private static final String WEBHOOK_STRATEGY = "Webhook";
+  private static final String ERROR_MSG_PREFIX_WEBHOOK = "Invalid WebhookConversion configuration: ";
 
   private final CustomResourceConversion conversion;
 
@@ -41,7 +39,7 @@ class ConversionCollector {
 
   private static CustomResourceConversion from(NoneConversion noneConversion) {
     return new CustomResourceConversionBuilder()
-        .withStrategy(NONE_STRATEGY)
+        .withStrategy(NoneConversion.NAME)
         .build();
   }
 
@@ -59,7 +57,7 @@ class ConversionCollector {
     assertValidUrl(url);
 
     return new CustomResourceConversionBuilder()
-        .withStrategy(WEBHOOK_STRATEGY)
+        .withStrategy(WebhookConversion.NAME)
         .withNewWebhook()
         .addAllToConversionReviewVersions(versions)
         .withNewClientConfig()
@@ -87,27 +85,25 @@ class ConversionCollector {
     if (url != null) {
       // url
       if (serviceName != null || serviceNamespace != null || servicePath != null || servicePort != null) {
-        throw new IllegalArgumentException(String.format(
-            ERROR_MSG_WEBHOOKCONVERSION_PREFIX
-                + "Exactly one of URL or serviceNamespace/serviceName must be specified. "
+        throw createInvalidWebhookConversionException(
+            "Exactly one of URL or serviceNamespace/serviceName must be specified. "
                 + "serviceNamespace: %s, serviceName: %s, servicePath: %s, servicePort: %s, URL: %s",
-            serviceNamespace, serviceName, servicePath, servicePort, url));
+            serviceNamespace, serviceName, servicePath, servicePort, url);
       }
     } else if (serviceName == null || serviceNamespace == null) {
       // service
-      throw new IllegalArgumentException(String.format(
-          ERROR_MSG_WEBHOOKCONVERSION_PREFIX
-              + "Exactly one of URL or serviceNamespace/serviceName must be specified. "
-              + "serviceNamespace: %s, serviceName: %s, servicePath: %s, servicePort: %s, URL: null",
-          serviceNamespace, serviceName, servicePath, servicePort));
+      throw createInvalidWebhookConversionException("Exactly one of URL or serviceNamespace/serviceName must be specified. "
+          + "serviceNamespace: %s, serviceName: %s, servicePath: %s, servicePort: %s, URL: null",
+          serviceNamespace, serviceName, servicePath, servicePort);
     }
   }
 
   private static void assertValidServicePort(Integer servicePort) {
     if (servicePort != null) {
       if (servicePort < 1 || servicePort > 65535) {
-        throw new IllegalArgumentException(ERROR_MSG_WEBHOOKCONVERSION_PREFIX
-            + "Service port must be a valid port number (1-65535, inclusive). ServicePort: " + servicePort);
+        throw createInvalidWebhookConversionException(
+            "Service port must be a valid port number (1-65535, inclusive). ServicePort: %s",
+            servicePort);
       }
     }
   }
@@ -117,25 +113,24 @@ class ConversionCollector {
       try {
         final URL url = new URL(urlString);
         if (!"https".equals(url.getProtocol())) {
-          throw new IllegalArgumentException(
-              String.format(ERROR_MSG_WEBHOOKCONVERSION_PREFIX
-                  + "URL schema of %s is invalid. "
-                  + "Only https:// is allowed.", urlString));
+          throw createInvalidWebhookConversionException(
+              "URL schema of %s is invalid. Only https:// is allowed.", urlString);
         }
         if (url.getQuery() != null) {
-          throw new IllegalArgumentException(
-              String.format(ERROR_MSG_WEBHOOKCONVERSION_PREFIX + "URL %s contains query parameters "
-                  + "which are not allowed.", urlString));
+          throw createInvalidWebhookConversionException(
+              "URL %s contains query parameters which are not allowed.", urlString);
         }
         if (url.getRef() != null) {
-          throw new IllegalArgumentException(
-              String.format(ERROR_MSG_WEBHOOKCONVERSION_PREFIX + "URL %s contains fragment(s) "
-                  + "which is not allowed.", urlString));
+          throw createInvalidWebhookConversionException(
+              "URL %s contains fragment(s) which is not allowed.", urlString);
         }
       } catch (MalformedURLException e) {
-        throw new IllegalArgumentException(
-            String.format(ERROR_MSG_WEBHOOKCONVERSION_PREFIX + "Malformed URL: %s", e.getMessage()));
+        throw createInvalidWebhookConversionException("Malformed URL: %s", e.getMessage());
       }
     }
+  }
+
+  private static IllegalArgumentException createInvalidWebhookConversionException(String msg, Object... args) {
+    return new IllegalArgumentException(ERROR_MSG_PREFIX_WEBHOOK + msg.formatted(args));
   }
 }
