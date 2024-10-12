@@ -6,10 +6,6 @@ import lombok.Data;
 @Data
 public class ReplicaSpec {
 
-  private String name;
-
-  private int port;
-
   @SpecReplicas
   private int replicas;
 }
