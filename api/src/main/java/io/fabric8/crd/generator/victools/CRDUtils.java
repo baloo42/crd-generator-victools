@@ -12,6 +12,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static java.util.Optional.ofNullable;
+
 @UtilityClass
 public class CRDUtils {
 
@@ -40,5 +42,13 @@ public class CRDUtils {
 
     Map<Object, Boolean> seen = new ConcurrentHashMap<>();
     return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+  }
+
+  public static String emptyToNull(String value) {
+    return ofNullable(value).filter(s -> !s.isEmpty()).orElse(null);
+  }
+
+  public static Integer zeroToNull(Integer value) {
+    return ofNullable(value).filter(i -> i != 0).orElse(null);
   }
 }

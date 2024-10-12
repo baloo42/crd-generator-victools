@@ -16,6 +16,7 @@
 package io.fabric8.crd.generator.victools.approvaltests;
 
 import com.spun.util.tests.TestUtils;
+import io.fabric8.crd.generator.victools.approvaltests.conversion.NoneConversionExample;
 import io.fabric8.crd.generator.victools.approvaltests.externaldocs.ExternalDoc;
 import io.fabric8.crd.generator.victools.approvaltests.k8svalidation.K8sValidation;
 import io.fabric8.crd.generator.victools.approvaltests.maptype.MapType;
@@ -113,6 +114,10 @@ class CRDGeneratorVictoolsApprovalTest {
           io.fabric8.crd.generator.victools.approvaltests.deprecated.v1.DeprecationExample.class,
           io.fabric8.crd.generator.victools.approvaltests.deprecated.v1beta1.DeprecationExample.class,
           io.fabric8.crd.generator.victools.approvaltests.deprecated.v2.DeprecationExample.class));
+      cases.add(new TestCase("noneconversions.samples.fabric8.io", crdVersion, parallel, NoneConversionExample.class));
+      cases.add(new TestCase("webhookconversions.samples.fabric8.io", crdVersion, parallel,
+          io.fabric8.crd.generator.victools.approvaltests.conversion.v1.WebhookConversionExample.class,
+          io.fabric8.crd.generator.victools.approvaltests.conversion.v2.WebhookConversionExample.class));
     }
     return cases.stream();
   }

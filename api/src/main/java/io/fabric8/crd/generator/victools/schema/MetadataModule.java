@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.emptyToNull;
+import static io.fabric8.crd.generator.victools.CRDUtils.emptyToNull;
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotation;
 import static java.util.Optional.ofNullable;
 
