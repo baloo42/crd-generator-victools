@@ -2,12 +2,6 @@
   "properties" : {
     "spec" : {
       "properties" : {
-        "name" : {
-          "type" : "string"
-        },
-        "port" : {
-          "type" : "integer"
-        },
         "replicas" : {
           "type" : "integer"
         }
@@ -16,11 +10,11 @@
     },
     "status" : {
       "properties" : {
+        "labelSelector" : {
+          "type" : "string"
+        },
         "replicas" : {
           "type" : "integer"
-        },
-        "running" : {
-          "type" : "boolean"
         }
       },
       "type" : "object"
