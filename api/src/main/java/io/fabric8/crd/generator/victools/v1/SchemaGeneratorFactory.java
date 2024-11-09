@@ -15,15 +15,14 @@ import io.fabric8.crd.generator.victools.schema.ConstToEnumInAllOfModule;
 import io.fabric8.crd.generator.victools.schema.EmbeddedResourceModule;
 import io.fabric8.crd.generator.victools.schema.ExplicitNullableModule;
 import io.fabric8.crd.generator.victools.schema.ExternalDocsModule;
-import io.fabric8.crd.generator.victools.schema.FkcValidationModule;
 import io.fabric8.crd.generator.victools.schema.ImplicitMapModule;
 import io.fabric8.crd.generator.victools.schema.IntOrStringModule;
 import io.fabric8.crd.generator.victools.schema.JacksonEnumModule;
 import io.fabric8.crd.generator.victools.schema.KubernetesMapTypeModule;
 import io.fabric8.crd.generator.victools.schema.MetadataModule;
 import io.fabric8.crd.generator.victools.schema.PreserveUnknownFieldsModule;
-import io.fabric8.crd.generator.victools.schema.SchemaFromModule;
 import io.fabric8.crd.generator.victools.schema.ValidationModule;
+import io.fabric8.crd.generator.victools.schema.fkc.FkcSchemaFromModule;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -82,7 +81,7 @@ class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
     }
 
     builder
-        .with(new SchemaFromModule())
+      .with(new FkcSchemaFromModule())
         .with(new JacksonEnumModule())
         .with(new ValidationModule())
         .with(new FkcValidationModule())
