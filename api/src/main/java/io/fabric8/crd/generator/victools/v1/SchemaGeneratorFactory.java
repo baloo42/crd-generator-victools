@@ -82,14 +82,14 @@ class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
     }
 
     builder
-      .with(new FkcSchemaFromModule())
+        .with(new FkcSchemaFromModule())
         .with(new JacksonEnumModule())
         .with(new ValidationModule())
         .with(new FkcValidationModule())
         .with(new FkcKubernetesValidationModule(context))
         .with(new ExternalDocsModule())
         .with(new ImplicitMapModule())
-      .with(new FkcPreserveUnknownFieldsModule(context))
+        .with(new FkcPreserveUnknownFieldsModule(context))
         .with(new EmbeddedResourceModule())
         .with(new IntOrStringModule())
         .with(new KubernetesMapTypeModule())

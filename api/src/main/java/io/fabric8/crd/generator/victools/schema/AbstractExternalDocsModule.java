@@ -6,7 +6,6 @@ import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGenerationContext;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.TypeScope;
-import io.fabric8.crd.generator.victools.annotation.ExternalDocs;
 import io.fabric8.crd.generator.victools.spi.KubernetesSchemaKeyword;
 import lombok.RequiredArgsConstructor;
 
@@ -15,7 +14,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static io.fabric8.crd.generator.victools.CRDUtils.emptyToNull;
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotation;
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotationOnFieldAndGetter;
 
@@ -32,33 +30,33 @@ public abstract class AbstractExternalDocsModule<T extends Annotation> implement
   }
 
   private void overrideTypeAttributes(
-    ObjectNode attributes,
-    TypeScope scope,
-    SchemaGenerationContext schemaGenerationContext) {
+      ObjectNode attributes,
+      TypeScope scope,
+      SchemaGenerationContext schemaGenerationContext) {
 
     processExternalDocsAnnotation(attributes, () -> findExternalDocsAnnotation(scope));
   }
 
   private void overrideInstanceAttributes(
-    ObjectNode attributes,
-    MemberScope<?, ?> scope,
-    SchemaGenerationContext schemaGenerationContext) {
+      ObjectNode attributes,
+      MemberScope<?, ?> scope,
+      SchemaGenerationContext schemaGenerationContext) {
 
     processExternalDocsAnnotation(attributes, () -> findExternalDocsAnnotation(scope));
   }
 
   private void processExternalDocsAnnotation(
-    ObjectNode attributes,
-    Supplier<Optional<T>> supplier) {
+      ObjectNode attributes,
+      Supplier<Optional<T>> supplier) {
 
     supplier.get()
-      .map(mapper)
-      .filter(ExternalDocsInfo::isNotEmpty)
-      .ifPresent(info -> {
-        var externalDocs = attributes.putObject(KubernetesSchemaKeyword.EXTERNAL_DOCS.getValue());
-        info.getDescription().ifPresent(s -> externalDocs.put("description", s));
-        info.getUrl().ifPresent(s -> externalDocs.put("url", s));
-      });
+        .map(mapper)
+        .filter(ExternalDocsInfo::isNotEmpty)
+        .ifPresent(info -> {
+          var externalDocs = attributes.putObject(KubernetesSchemaKeyword.EXTERNAL_DOCS.getValue());
+          info.getDescription().ifPresent(s -> externalDocs.put("description", s));
+          info.getUrl().ifPresent(s -> externalDocs.put("url", s));
+        });
   }
 
   private Optional<T> findExternalDocsAnnotation(TypeScope scope) {

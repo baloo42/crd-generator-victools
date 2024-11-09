@@ -34,7 +34,7 @@ public class EmbeddedResourceModule implements Module {
     private final Set<Class<?>> classes;
     private final Set<Class<?>> interfaces;
 
-    public ImplicitEmbeddedResourceCustomDefinitionProvider(Set<Class<?>> classes) {
+    ImplicitEmbeddedResourceCustomDefinitionProvider(Set<Class<?>> classes) {
       this.classes = classes;
       this.interfaces = classes.stream()
           .filter(Class::isInterface)

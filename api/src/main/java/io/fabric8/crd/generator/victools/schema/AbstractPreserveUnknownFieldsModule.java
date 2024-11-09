@@ -34,9 +34,9 @@ public class AbstractPreserveUnknownFieldsModule<T extends Annotation> implement
   }
 
   private void overrideInstanceAttributes(
-    ObjectNode attributes,
-    MemberScope<?, ?> scope,
-    SchemaGenerationContext schemaGenerationContext) {
+      ObjectNode attributes,
+      MemberScope<?, ?> scope,
+      SchemaGenerationContext schemaGenerationContext) {
 
     if (scope.isFakeContainerItemScope()) {
       return;
@@ -53,8 +53,8 @@ public class AbstractPreserveUnknownFieldsModule<T extends Annotation> implement
   }
 
   private CustomDefinition provideCustomSchemaDefinition(
-    ResolvedType javaType,
-    SchemaGenerationContext context) {
+      ResolvedType javaType,
+      SchemaGenerationContext context) {
 
     if (!IMPLICIT_CLASSES.contains(javaType.getErasedType())) {
       return null;
@@ -67,7 +67,7 @@ public class AbstractPreserveUnknownFieldsModule<T extends Annotation> implement
 
   private boolean hasPreserveUnknownFieldsAnnotation(MemberScope<?, ?> scope) {
     return findAnnotationOnFieldAndGetter(scope, annotationClass)
-      .isPresent();
+        .isPresent();
   }
 
   private boolean hasImplicitPreserveUnknownFields(MemberScope<?, ?> scope) {
@@ -77,6 +77,6 @@ public class AbstractPreserveUnknownFieldsModule<T extends Annotation> implement
 
     var beanDescription = context.introspect(scope.getType().getErasedType());
     return beanDescription.findAnyGetter() != null
-           || beanDescription.findAnySetterAccessor() != null;
+        || beanDescription.findAnySetterAccessor() != null;
   }
 }

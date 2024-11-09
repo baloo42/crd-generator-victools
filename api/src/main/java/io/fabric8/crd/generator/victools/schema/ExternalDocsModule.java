@@ -12,7 +12,7 @@ public class ExternalDocsModule extends AbstractExternalDocsModule<ExternalDocs>
 
   private static AbstractExternalDocsModule.ExternalDocsInfo from(ExternalDocs annotation) {
     return new ExternalDocsInfo(
-      emptyToNull(annotation.description()),
-      emptyToNull(annotation.url()));
+        emptyToNull(annotation.description()),
+        emptyToNull(annotation.url()));
   }
 }
