@@ -1,8 +1,9 @@
-package io.fabric8.crd.generator.victools.schema;
+package io.fabric8.crd.generator.victools.schema.fkc;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.victools.jsonschema.generator.MemberScope;
+import io.fabric8.crd.generator.victools.schema.AbstractValidationModule;
 import io.fabric8.generator.annotation.Default;
 import io.fabric8.generator.annotation.Max;
 import io.fabric8.generator.annotation.Min;

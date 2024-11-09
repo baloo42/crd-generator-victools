@@ -23,6 +23,7 @@ import io.fabric8.crd.generator.victools.schema.MetadataModule;
 import io.fabric8.crd.generator.victools.schema.PreserveUnknownFieldsModule;
 import io.fabric8.crd.generator.victools.schema.ValidationModule;
 import io.fabric8.crd.generator.victools.schema.fkc.FkcSchemaFromModule;
+import io.fabric8.crd.generator.victools.schema.fkc.FkcValidationModule;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
