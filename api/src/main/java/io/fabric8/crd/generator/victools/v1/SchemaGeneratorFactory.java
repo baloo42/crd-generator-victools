@@ -20,8 +20,8 @@ import io.fabric8.crd.generator.victools.schema.IntOrStringModule;
 import io.fabric8.crd.generator.victools.schema.JacksonEnumModule;
 import io.fabric8.crd.generator.victools.schema.KubernetesMapTypeModule;
 import io.fabric8.crd.generator.victools.schema.MetadataModule;
-import io.fabric8.crd.generator.victools.schema.PreserveUnknownFieldsModule;
 import io.fabric8.crd.generator.victools.schema.ValidationModule;
+import io.fabric8.crd.generator.victools.schema.fkc.FkcPreserveUnknownFieldsModule;
 import io.fabric8.crd.generator.victools.schema.fkc.FkcSchemaFromModule;
 import io.fabric8.crd.generator.victools.schema.fkc.FkcValidationModule;
 import lombok.extern.slf4j.Slf4j;
@@ -89,7 +89,7 @@ class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
         .with(new FkcKubernetesValidationModule(context))
         .with(new ExternalDocsModule())
         .with(new ImplicitMapModule())
-        .with(new PreserveUnknownFieldsModule(context))
+      .with(new FkcPreserveUnknownFieldsModule(context))
         .with(new EmbeddedResourceModule())
         .with(new IntOrStringModule())
         .with(new KubernetesMapTypeModule())
