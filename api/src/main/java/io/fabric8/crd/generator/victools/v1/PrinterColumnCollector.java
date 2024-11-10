@@ -1,9 +1,8 @@
 package io.fabric8.crd.generator.victools.v1;
 
+import io.fabric8.crd.generator.victools.AdditionalPrinterColumnProvider;
 import io.fabric8.crd.generator.victools.CustomResourceContext;
-import io.fabric8.crd.generator.victools.CustomResourceInfo;
-import io.fabric8.crd.generator.victools.PrinterColumnInfo;
-import io.fabric8.crd.generator.victools.annotation.AdditionalPrinterColumn;
+import io.fabric8.crd.generator.victools.model.PrinterColumnInfo;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceColumnDefinition;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceColumnDefinitionBuilder;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.JSONSchemaProps;
@@ -14,27 +13,23 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.fabric8.crd.generator.victools.CRDUtils.distinctByKey;
-import static io.fabric8.crd.generator.victools.CRDUtils.emptyToNull;
-import static io.fabric8.crd.generator.victools.CRDUtils.findRepeatingAnnotations;
 
 class PrinterColumnCollector implements PathAwareSchemaPropsVisitor.IdentifiedPropertyVisitor {
 
-  private final Map<String, CustomResourceColumnDefinition> topLevelColumns = new HashMap<>();
   private final Map<String, CustomResourceColumnDefinition> columns = new HashMap<>();
 
-  @NonNull
   private final CustomResourceContext context;
+  private final List<AdditionalPrinterColumnProvider> providers;
 
   public PrinterColumnCollector(
-      @NonNull CustomResourceInfo crInfo,
-      @NonNull CustomResourceContext context) {
+      @NonNull CustomResourceContext context,
+      @NonNull List<AdditionalPrinterColumnProvider> providers) {
     this.context = context;
-
-    findTopLevelColumns(crInfo)
-        .forEach(this::addTopLevelColumn);
+    this.providers = providers;
   }
 
   @Override
@@ -45,15 +40,19 @@ class PrinterColumnCollector implements PathAwareSchemaPropsVisitor.IdentifiedPr
   }
 
   public List<CustomResourceColumnDefinition> getColumns() {
-    return Stream.of(columns.values(), topLevelColumns.values())
+    return Stream.of(columns.values(), getAdditionalColumns())
         .flatMap(Collection::stream)
         .filter(distinctByKey(CustomResourceColumnDefinition::getJsonPath))
         .sorted(Comparator.comparing(CustomResourceColumnDefinition::getJsonPath))
         .toList();
   }
 
-  private void addTopLevelColumn(CustomResourceColumnDefinition column) {
-    topLevelColumns.put(column.getJsonPath(), column);
+  private List<CustomResourceColumnDefinition> getAdditionalColumns() {
+    return providers.stream()
+        .map(AdditionalPrinterColumnProvider::getAdditionalPrinterColumns)
+        .flatMap(Collection::stream)
+        .map(this::createColumn)
+        .collect(Collectors.toList());
   }
 
   private void addColumn(CustomResourceColumnDefinition column) {
@@ -66,27 +65,24 @@ class PrinterColumnCollector implements PathAwareSchemaPropsVisitor.IdentifiedPr
       JSONSchemaProps schema) {
 
     String name = info.findName().orElse(path.substring(path.lastIndexOf('.') + 1));
+    return createColumn(PrinterColumnInfo.builder()
+        .name(name)
+        .jsonPath(path)
+        .description(info.description())
+        .type(schema.getType())
+        .format(info.format())
+        .priority(info.priority())
+        .build());
+  }
+
+  private CustomResourceColumnDefinition createColumn(PrinterColumnInfo info) {
     return new CustomResourceColumnDefinitionBuilder()
-        .withName(name)
-        .withType(schema.getType())
+        .withName(info.name())
+        .withJsonPath(info.jsonPath())
+        .withDescription(info.description())
+        .withType(info.type())
         .withFormat(info.format())
         .withPriority(info.priority())
-        .withJsonPath(path)
-        .build();
-  }
-
-  private Collection<CustomResourceColumnDefinition> findTopLevelColumns(
-      CustomResourceInfo crInfo) {
-    return findRepeatingAnnotations(crInfo.definition(), AdditionalPrinterColumn.class).stream()
-        .map(PrinterColumnCollector::createColumn)
-        .toList();
-  }
-
-  private static CustomResourceColumnDefinition createColumn(AdditionalPrinterColumn annotation) {
-    return new CustomResourceColumnDefinitionBuilder()
-        .withName(emptyToNull(annotation.name()))
-        .withJsonPath(annotation.jsonPath())
-        .withPriority(annotation.priority())
         .build();
   }
 
