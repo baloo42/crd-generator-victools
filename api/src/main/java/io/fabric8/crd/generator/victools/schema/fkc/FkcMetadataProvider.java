@@ -12,7 +12,6 @@ import java.util.Optional;
 
 import static io.fabric8.crd.generator.victools.CRDUtils.emptyToNull;
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotation;
-import static java.util.Optional.ofNullable;
 
 public class FkcMetadataProvider implements MetadataModule.MetadataProvider {
 
@@ -38,19 +37,16 @@ public class FkcMetadataProvider implements MetadataModule.MetadataProvider {
   }
 
   @Override
-  public Optional<PrinterColumnInfo> findPrinterColumn(FieldScope scope, @Deprecated String format) {
+  public Optional<PrinterColumnInfo> findPrinterColumn(FieldScope scope) {
     return findAnnotation(scope, PrinterColumn.class)
-        .map(a -> mapPrinterColumn(a, format));
+        .map(this::mapPrinterColumn);
   }
 
-  private PrinterColumnInfo mapPrinterColumn(PrinterColumn annotation, String formatFrom) {
-    var format = ofNullable(emptyToNull(annotation.format()))
-        .orElse(formatFrom);
-
+  private PrinterColumnInfo mapPrinterColumn(PrinterColumn annotation) {
     return PrinterColumnInfo.builder()
         .name(emptyToNull(annotation.name()))
-        .format(format)
-        .priority(annotation.priority())
+        .format(emptyToNull(annotation.format()))
+        .priority(annotation.priority()) // TODO: omit zero
         .build();
   }
 }

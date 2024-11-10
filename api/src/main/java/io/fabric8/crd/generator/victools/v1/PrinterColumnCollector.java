@@ -10,26 +10,27 @@ import lombok.NonNull;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.TreeMap;
 
 import static io.fabric8.crd.generator.victools.CRDUtils.distinctByKey;
+import static java.util.Optional.ofNullable;
 
 class PrinterColumnCollector implements PathAwareSchemaPropsVisitor.IdentifiedPropertyVisitor {
 
-  private final Map<String, CustomResourceColumnDefinition> columns = new HashMap<>();
+  private final Map<String, CustomResourceColumnDefinition> columns = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
   private final CustomResourceContext context;
-  private final List<AdditionalPrinterColumnProvider> providers;
 
   public PrinterColumnCollector(
       @NonNull CustomResourceContext context,
       @NonNull List<AdditionalPrinterColumnProvider> providers) {
     this.context = context;
-    this.providers = providers;
+    providers.stream()
+        .map(AdditionalPrinterColumnProvider::getAdditionalPrinterColumns)
+        .flatMap(Collection::stream)
+        .forEach(this::addColumn);
   }
 
   @Override
@@ -40,42 +41,33 @@ class PrinterColumnCollector implements PathAwareSchemaPropsVisitor.IdentifiedPr
   }
 
   public List<CustomResourceColumnDefinition> getColumns() {
-    return Stream.of(columns.values(), getAdditionalColumns())
-        .flatMap(Collection::stream)
+    return columns.values().stream()
         .filter(distinctByKey(CustomResourceColumnDefinition::getJsonPath))
         .sorted(Comparator.comparing(CustomResourceColumnDefinition::getJsonPath))
         .toList();
   }
 
-  private List<CustomResourceColumnDefinition> getAdditionalColumns() {
-    return providers.stream()
-        .map(AdditionalPrinterColumnProvider::getAdditionalPrinterColumns)
-        .flatMap(Collection::stream)
-        .map(this::createColumn)
-        .collect(Collectors.toList());
-  }
+  private void addColumn(PrinterColumnInfo info) {
+    String name = ofNullable(info.name())
+        .orElse(info.jsonPath().substring(info.jsonPath().lastIndexOf('.') + 1));
 
-  private void addColumn(CustomResourceColumnDefinition column) {
+    var column = createColumnDefinition(info.toBuilder().name(name).build());
     columns.put(column.getJsonPath(), column);
   }
 
-  private CustomResourceColumnDefinition createColumn(
+  private PrinterColumnInfo createColumn(
       String path,
       PrinterColumnInfo info,
       JSONSchemaProps schema) {
 
-    String name = info.findName().orElse(path.substring(path.lastIndexOf('.') + 1));
-    return createColumn(PrinterColumnInfo.builder()
-        .name(name)
+    return info.toBuilder()
         .jsonPath(path)
-        .description(info.description())
-        .type(schema.getType())
-        .format(info.format())
-        .priority(info.priority())
-        .build());
+        .type(ofNullable(info.type()).orElse(schema.getType()))
+        .format(schema.getFormat())
+        .build();
   }
 
-  private CustomResourceColumnDefinition createColumn(PrinterColumnInfo info) {
+  private CustomResourceColumnDefinition createColumnDefinition(PrinterColumnInfo info) {
     return new CustomResourceColumnDefinitionBuilder()
         .withName(info.name())
         .withJsonPath(info.jsonPath())

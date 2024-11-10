@@ -1,6 +1,5 @@
 package io.fabric8.crd.generator.victools.schema;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.victools.jsonschema.generator.FieldScope;
 import com.github.victools.jsonschema.generator.Module;
@@ -17,8 +16,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import static java.util.Optional.ofNullable;
 
 /**
  * This module collects metadata and saves it to the {@link CustomResourceContext}, so that
@@ -66,11 +63,7 @@ public class MetadataModule implements Module {
         isIdRequired.set(true);
       }
 
-      var format = ofNullable(attributes.get("format"))
-          .map(JsonNode::asText)
-          .orElse(null);
-
-      var printerColumnOptional = provider.findPrinterColumn(scope, format);
+      var printerColumnOptional = provider.findPrinterColumn(scope);
       if (printerColumnOptional.isPresent()) {
         customResourceContext.setPrinterColumnInfo(id, printerColumnOptional.get());
         isIdRequired.set(true);
@@ -100,7 +93,7 @@ public class MetadataModule implements Module {
       return false;
     }
 
-    default Optional<PrinterColumnInfo> findPrinterColumn(FieldScope scope, @Deprecated String format) {
+    default Optional<PrinterColumnInfo> findPrinterColumn(FieldScope scope) {
       return Optional.empty();
     }
   }

@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
-import java.util.function.Function;
 
 import static io.fabric8.crd.generator.victools.CRDUtils.findRepeatingAnnotations;
 
@@ -15,15 +14,16 @@ public interface AdditionalPrinterColumnProvider {
   List<PrinterColumnInfo> getAdditionalPrinterColumns();
 
   @RequiredArgsConstructor
-  class TopLevelAnnotationPrinterColumnProvider<T extends Annotation> implements AdditionalPrinterColumnProvider {
+  abstract class TopLevelAnnotationPrinterColumnProvider<T extends Annotation> implements AdditionalPrinterColumnProvider {
     private final CustomResourceInfo crInfo;
     private final Class<T> annotationClass;
-    private final Function<T, PrinterColumnInfo> mapper;
+
+    protected abstract PrinterColumnInfo map(T annotation);
 
     @Override
     public List<PrinterColumnInfo> getAdditionalPrinterColumns() {
       return findRepeatingAnnotations(crInfo.definition(), annotationClass).stream()
-          .map(mapper)
+          .map(this::map)
           .toList();
     }
   }

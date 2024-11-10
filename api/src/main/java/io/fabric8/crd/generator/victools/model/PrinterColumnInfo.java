@@ -2,9 +2,7 @@ package io.fabric8.crd.generator.victools.model;
 
 import lombok.Builder;
 
-import java.util.Optional;
-
-@Builder
+@Builder(toBuilder = true)
 public record PrinterColumnInfo(
     String name,
     String description,
@@ -12,9 +10,4 @@ public record PrinterColumnInfo(
     String type,
     String format,
     Integer priority) {
-
-  public Optional<String> findName() {
-    return Optional.ofNullable(name);
-  }
-
 }
