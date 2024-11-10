@@ -89,12 +89,17 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
 
     // >>> Post-Processing Phase ---
     var printerColumnProviders = new LinkedList<PrinterColumnProvider>();
-    printerColumnProviders.add(new AdditionalPrinterColumnProvider(crInfo));
-    // TODO: add FkcAdditionalPrinterColumnProvider(crInfo) once updated to fabric8/kubernetes-client v7
-
     var selectableFieldProviders = new LinkedList<SelectableFieldProvider>();
-    selectableFieldProviders.add(new AdditionalSelectableFieldProvider(crInfo));
-    // TODO: add FkcAdditionalSelectableFieldProvider(crInfo) once updated to fabric8/kubernetes-client v7
+
+    if (generatorContext.isEnabled(CRDGeneratorSchemaOption.OWN_ANNOTATIONS)) {
+      printerColumnProviders.add(new AdditionalPrinterColumnProvider(crInfo));
+      selectableFieldProviders.add(new AdditionalSelectableFieldProvider(crInfo));
+    }
+
+    if (generatorContext.isEnabled(CRDGeneratorSchemaOption.FKC_ANNOTATIONS)) {
+      // TODO: add FkcAdditionalPrinterColumnProvider(crInfo) once updated to fabric8/kubernetes-client v7
+      // TODO: add FkcAdditionalSelectableFieldProvider(crInfo) once updated to fabric8/kubernetes-client v7
+    }
 
     var conversionCollector = new ConversionCollector(crInfo);
     var printerColumnCollector = new PrinterColumnCollector(customResourceContext, printerColumnProviders);

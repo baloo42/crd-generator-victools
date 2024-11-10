@@ -21,10 +21,13 @@ import io.fabric8.crd.generator.victools.schema.IntOrStringModule;
 import io.fabric8.crd.generator.victools.schema.JacksonEnumModule;
 import io.fabric8.crd.generator.victools.schema.KubernetesMapTypeModule;
 import io.fabric8.crd.generator.victools.schema.MetadataModule;
-import io.fabric8.crd.generator.victools.schema.MetadataProvider;
+import io.fabric8.crd.generator.victools.schema.PrinterColumnProvider;
+import io.fabric8.crd.generator.victools.schema.ScaleSubresourceProvider;
+import io.fabric8.crd.generator.victools.schema.SelectableFieldProvider;
 import io.fabric8.crd.generator.victools.schema.ValidationModule;
-import io.fabric8.crd.generator.victools.schema.fkc.FkcMetadataProvider;
 import io.fabric8.crd.generator.victools.schema.fkc.FkcPreserveUnknownFieldsModule;
+import io.fabric8.crd.generator.victools.schema.fkc.FkcPrinterColumnProvider;
+import io.fabric8.crd.generator.victools.schema.fkc.FkcScaleSubresourceProvider;
 import io.fabric8.crd.generator.victools.schema.fkc.FkcSchemaFromModule;
 import io.fabric8.crd.generator.victools.schema.fkc.FkcValidationModule;
 import lombok.extern.slf4j.Slf4j;
@@ -88,7 +91,10 @@ class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
 
     var metadataProvider = new LinkedList<MetadataModule.MetadataProvider>();
     if (context.isEnabled(CRDGeneratorSchemaOption.FKC_ANNOTATIONS)) {
-      metadataProvider.add(new FkcMetadataProvider());
+      metadataProvider.add(new FkcScaleSubresourceProvider());
+      metadataProvider.add(new FkcPrinterColumnProvider());
+      // TODO: add FkcSelectableFieldProvider once updated to fabric8/kubernetes-client v7
+      // metadataProvider.add(new FkcSelectableFieldProvider());
 
       builder
           .with(new FkcSchemaFromModule())
@@ -97,7 +103,9 @@ class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
           .with(new FkcPreserveUnknownFieldsModule(context));
     }
     if (context.isEnabled(CRDGeneratorSchemaOption.OWN_ANNOTATIONS)) {
-      metadataProvider.add(new MetadataProvider());
+      metadataProvider.add(new ScaleSubresourceProvider());
+      metadataProvider.add(new PrinterColumnProvider());
+      metadataProvider.add(new SelectableFieldProvider());
 
       builder
           .with(new ValidationModule())
