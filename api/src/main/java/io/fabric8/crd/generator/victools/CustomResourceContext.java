@@ -1,5 +1,6 @@
 package io.fabric8.crd.generator.victools;
 
+import io.fabric8.crd.generator.victools.model.PrinterColumnInfo;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
 
@@ -33,11 +33,8 @@ public class CustomResourceContext {
   @Getter
   private final Set<String> dependentClasses = new HashSet<>();
 
-  public void collectDependentClasses(Class<?> rawClass) {
-    if (rawClass != null && !rawClass.getName().startsWith("java.") && dependentClasses.add(rawClass.getName())) {
-      Stream.of(rawClass.getInterfaces()).forEach(this::collectDependentClasses);
-      collectDependentClasses(rawClass.getSuperclass());
-    }
+  public boolean addDependentClass(String name) {
+    return dependentClasses.add(name);
   }
 
   public void setPrinterColumnInfo(String fieldId, PrinterColumnInfo info) {

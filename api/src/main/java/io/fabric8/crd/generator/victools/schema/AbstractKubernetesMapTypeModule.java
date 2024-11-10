@@ -6,8 +6,6 @@ import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGenerationContext;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.TypeScope;
-import io.fabric8.crd.generator.victools.model.ExternalDocsInfo;
-import io.fabric8.crd.generator.victools.spi.KubernetesSchemaKeyword;
 import lombok.RequiredArgsConstructor;
 
 import java.lang.annotation.Annotation;
@@ -17,12 +15,13 @@ import java.util.function.Supplier;
 
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotation;
 import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotationOnFieldAndGetter;
+import static io.fabric8.crd.generator.victools.spi.KubernetesSchemaKeyword.KUBERNETES_MAP_TYPE;
 
 @RequiredArgsConstructor
-public abstract class AbstractExternalDocsModule<T extends Annotation> implements Module {
+public abstract class AbstractKubernetesMapTypeModule<T extends Annotation> implements Module {
 
   private final Class<T> annotationClass;
-  private final Function<T, ExternalDocsInfo> mapper;
+  private final Function<T, String> mapper;
 
   public void applyToConfigBuilder(SchemaGeneratorConfigBuilder builder) {
     builder.forFields().withInstanceAttributeOverride(this::overrideInstanceAttributes);
@@ -30,41 +29,38 @@ public abstract class AbstractExternalDocsModule<T extends Annotation> implement
     builder.forTypesInGeneral().withTypeAttributeOverride(this::overrideTypeAttributes);
   }
 
+  private void overrideInstanceAttributes(
+      ObjectNode attributes,
+      MemberScope<?, ?> scope,
+      SchemaGenerationContext schemaGenerationContext) {
+    if (scope.isFakeContainerItemScope()) {
+      return;
+    }
+
+    processMapTypeAnnotation(attributes, () -> findMapTypeAnnotation(scope));
+  }
+
   private void overrideTypeAttributes(
       ObjectNode attributes,
       TypeScope scope,
       SchemaGenerationContext schemaGenerationContext) {
 
-    processExternalDocsAnnotation(attributes, () -> findExternalDocsAnnotation(scope));
+    processMapTypeAnnotation(attributes, () -> findMapTypeAnnotation(scope));
   }
 
-  private void overrideInstanceAttributes(
-      ObjectNode attributes,
-      MemberScope<?, ?> scope,
-      SchemaGenerationContext schemaGenerationContext) {
-
-    processExternalDocsAnnotation(attributes, () -> findExternalDocsAnnotation(scope));
-  }
-
-  private void processExternalDocsAnnotation(
+  private void processMapTypeAnnotation(
       ObjectNode attributes,
       Supplier<Optional<T>> supplier) {
 
     supplier.get()
-        .map(mapper)
-        .filter(ExternalDocsInfo::isNotEmpty)
-        .ifPresent(info -> {
-          var externalDocs = attributes.putObject(KubernetesSchemaKeyword.EXTERNAL_DOCS.getValue());
-          info.getDescription().ifPresent(s -> externalDocs.put("description", s));
-          info.getUrl().ifPresent(s -> externalDocs.put("url", s));
-        });
+        .ifPresent(annotation -> attributes.put(KUBERNETES_MAP_TYPE.getValue(), mapper.apply(annotation)));
   }
 
-  private Optional<T> findExternalDocsAnnotation(TypeScope scope) {
+  private Optional<T> findMapTypeAnnotation(TypeScope scope) {
     return findAnnotation(scope, annotationClass);
   }
 
-  private Optional<T> findExternalDocsAnnotation(MemberScope<?, ?> scope) {
+  private Optional<T> findMapTypeAnnotation(MemberScope<?, ?> scope) {
     return findAnnotationOnFieldAndGetter(scope, annotationClass);
   }
 }

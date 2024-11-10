@@ -7,23 +7,17 @@ import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGenerationContext;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaKeyword;
-import com.github.victools.jsonschema.generator.TypeScope;
-import io.fabric8.crd.generator.annotation.PrinterColumn;
 import io.fabric8.crd.generator.victools.CustomResourceContext;
-import io.fabric8.crd.generator.victools.PrinterColumnInfo;
-import io.fabric8.crd.generator.victools.annotation.SelectableField;
-import io.fabric8.kubernetes.model.annotation.LabelSelector;
-import io.fabric8.kubernetes.model.annotation.SpecReplicas;
-import io.fabric8.kubernetes.model.annotation.StatusReplicas;
+import io.fabric8.crd.generator.victools.model.PrinterColumnInfo;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static io.fabric8.crd.generator.victools.CRDUtils.emptyToNull;
-import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.findAnnotation;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -42,64 +36,72 @@ public class MetadataModule implements Module {
 
   @NonNull
   private final CustomResourceContext customResourceContext;
+  @NonNull
+  private final List<MetadataProvider> metadataProviders;
 
   @Override
   public void applyToConfigBuilder(SchemaGeneratorConfigBuilder builder) {
-    builder.forFields().withInstanceAttributeOverride(this::onInstanceAttributes);
-    builder.forTypesInGeneral().withTypeAttributeOverride(this::onType);
+    builder.forFields().withInstanceAttributeOverride(this::overrideInstanceAttributes);
   }
 
-  private void onType(ObjectNode attributes, TypeScope scope, SchemaGenerationContext context) {
-    customResourceContext.collectDependentClasses(scope.getType().getErasedType());
-  }
-
-  private void onInstanceAttributes(ObjectNode attributes, FieldScope scope, SchemaGenerationContext context) {
+  private void overrideInstanceAttributes(ObjectNode attributes, FieldScope scope, SchemaGenerationContext context) {
     var id = UUID.randomUUID().toString();
     var isIdRequired = new AtomicBoolean(false);
 
-    findAnnotation(scope, PrinterColumn.class)
-        .map(annotation -> mapPrinterColumn(attributes, annotation))
-        .ifPresent(info -> {
-          customResourceContext.setPrinterColumnInfo(id, info);
-          isIdRequired.set(true);
-        });
+    for (MetadataProvider provider : metadataProviders) {
+      if (provider.isSpecReplicasField(scope)) {
+        customResourceContext.setSpecReplicasPath(id, true);
+        isIdRequired.set(true);
+      }
+      if (provider.isStatusReplicasField(scope)) {
+        customResourceContext.setStatusReplicasPath(id, true);
+        isIdRequired.set(true);
+      }
+      if (provider.isLabelSelectorField(scope)) {
+        customResourceContext.setLabelSelectorPath(id, true);
+        isIdRequired.set(true);
+      }
+      if (provider.isSelectableField(scope)) {
+        customResourceContext.setSelectableFieldPath(id, true);
+        isIdRequired.set(true);
+      }
 
-    findAnnotation(scope, SpecReplicas.class)
-        .ifPresent(annotation -> {
-          customResourceContext.setSpecReplicasPath(id, true);
-          isIdRequired.set(true);
-        });
+      var format = ofNullable(attributes.get("format"))
+          .map(JsonNode::asText)
+          .orElse(null);
 
-    findAnnotation(scope, StatusReplicas.class)
-        .ifPresent(annotation -> {
-          customResourceContext.setStatusReplicasPath(id, true);
-          isIdRequired.set(true);
-        });
-
-    findAnnotation(scope, LabelSelector.class)
-        .ifPresent(annotation -> {
-          customResourceContext.setLabelSelectorPath(id, true);
-          isIdRequired.set(true);
-        });
-
-    findAnnotation(scope, SelectableField.class)
-        .ifPresent(annotation -> {
-          customResourceContext.setSelectableFieldPath(id, true);
-          isIdRequired.set(true);
-        });
+      var printerColumnOptional = provider.findPrinterColumn(scope, format);
+      if (printerColumnOptional.isPresent()) {
+        customResourceContext.setPrinterColumnInfo(id, printerColumnOptional.get());
+        isIdRequired.set(true);
+      }
+    }
 
     if (isIdRequired.get()) {
       attributes.put("id", id);
     }
   }
 
-  private PrinterColumnInfo mapPrinterColumn(ObjectNode attributes, PrinterColumn annotation) {
-    var name = emptyToNull(annotation.name());
-    var format = ofNullable(emptyToNull(annotation.format()))
-        .orElseGet(() -> ofNullable(attributes.get("format"))
-            .map(JsonNode::asText)
-            .orElse(null));
-    var priority = annotation.priority();
-    return new PrinterColumnInfo(name, format, priority);
+  public interface MetadataProvider {
+
+    default boolean isSpecReplicasField(FieldScope scope) {
+      return false;
+    }
+
+    default boolean isStatusReplicasField(FieldScope scope) {
+      return false;
+    }
+
+    default boolean isLabelSelectorField(FieldScope scope) {
+      return false;
+    }
+
+    default boolean isSelectableField(FieldScope scope) {
+      return false;
+    }
+
+    default Optional<PrinterColumnInfo> findPrinterColumn(FieldScope scope, @Deprecated String format) {
+      return Optional.empty();
+    }
   }
 }
