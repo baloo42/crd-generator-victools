@@ -1,80 +1,60 @@
 package io.fabric8.crd.generator.victools.v1;
 
 import io.fabric8.crd.generator.victools.CustomResourceContext;
-import io.fabric8.crd.generator.victools.CustomResourceInfo;
-import io.fabric8.crd.generator.victools.annotation.AdditionalSelectableField;
+import io.fabric8.crd.generator.victools.SelectableFieldProvider;
+import io.fabric8.crd.generator.victools.model.SelectableFieldInfo;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.JSONSchemaProps;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.SelectableField;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.SelectableFieldBuilder;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import static io.fabric8.crd.generator.victools.CRDUtils.distinctByKey;
-import static io.fabric8.crd.generator.victools.CRDUtils.findRepeatingAnnotations;
 
-@RequiredArgsConstructor
 class SelectableFieldCollector implements PathAwareSchemaPropsVisitor.IdentifiedPropertyVisitor {
 
-  private final Map<String, SelectableField> topLevelSelectableFields = new HashMap<>();
-  private final Map<String, SelectableField> selectableFields = new HashMap<>();
+  private final List<SelectableFieldInfo> selectableFields = new LinkedList<>();
+  private final List<SelectableFieldInfo> additionalSelectableFields = new LinkedList<>();
 
   @NonNull
   private final CustomResourceContext context;
 
   public SelectableFieldCollector(
-      @NonNull CustomResourceInfo crInfo,
-      @NonNull CustomResourceContext context) {
+      @NonNull CustomResourceContext context,
+      @NonNull List<SelectableFieldProvider> providers) {
     this.context = context;
 
-    findTopLevelSelectableFields(crInfo)
-        .forEach(this::addTopLevelSelectableField);
+    providers.stream()
+        .map(SelectableFieldProvider::getSelectableFields)
+        .flatMap(Collection::stream)
+        .forEach(additionalSelectableFields::add);
   }
 
   @Override
   public void visit(String id, String path, JSONSchemaProps schema) {
     if (context.isSelectableFieldPath(id)) {
-      addSelectableField(createSelectableField(path));
+      selectableFields.add(new SelectableFieldInfo(path));
     }
   }
 
   public List<SelectableField> getSelectableFields() {
-    return Stream.of(selectableFields.values(), topLevelSelectableFields.values())
+    return Stream.of(selectableFields, additionalSelectableFields)
         .flatMap(Collection::stream)
-        .filter(distinctByKey(SelectableField::getJsonPath))
-        .sorted(Comparator.comparing(SelectableField::getJsonPath))
+        .filter(distinctByKey(SelectableFieldInfo::jsonPath))
+        .sorted(Comparator.comparing(SelectableFieldInfo::jsonPath))
+        .map(this::createSelectableField)
         .toList();
   }
 
-  private void addTopLevelSelectableField(SelectableField column) {
-    topLevelSelectableFields.put(column.getJsonPath(), column);
-  }
-
-  private void addSelectableField(SelectableField column) {
-    selectableFields.put(column.getJsonPath(), column);
-  }
-
-  private static SelectableField createSelectableField(String jsonPath) {
+  private SelectableField createSelectableField(SelectableFieldInfo info) {
     return new SelectableFieldBuilder()
-        .withJsonPath(jsonPath)
+        .withJsonPath(info.jsonPath())
         .build();
-  }
-
-  private static Collection<SelectableField> findTopLevelSelectableFields(
-      CustomResourceInfo crInfo) {
-    return findRepeatingAnnotations(crInfo.definition(), AdditionalSelectableField.class).stream()
-        .map(SelectableFieldCollector::createSelectableField)
-        .toList();
-  }
-
-  private static SelectableField createSelectableField(AdditionalSelectableField annotation) {
-    return createSelectableField(annotation.jsonPath());
   }
 
 }
