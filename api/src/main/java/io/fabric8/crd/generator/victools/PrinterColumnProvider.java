@@ -9,19 +9,20 @@ import java.util.List;
 import static io.fabric8.crd.generator.victools.CRDUtils.findRepeatingAnnotations;
 
 @FunctionalInterface
-public interface AdditionalPrinterColumnProvider {
+public interface PrinterColumnProvider {
 
-  List<PrinterColumnInfo> getAdditionalPrinterColumns();
+  List<PrinterColumnInfo> getPrinterColumns();
 
   @RequiredArgsConstructor
-  abstract class TopLevelAnnotationPrinterColumnProvider<T extends Annotation> implements AdditionalPrinterColumnProvider {
+  abstract class TopLevelAnnotationPrinterColumnProvider<T extends Annotation> implements
+      PrinterColumnProvider {
     private final CustomResourceInfo crInfo;
     private final Class<T> annotationClass;
 
     protected abstract PrinterColumnInfo map(T annotation);
 
     @Override
-    public List<PrinterColumnInfo> getAdditionalPrinterColumns() {
+    public List<PrinterColumnInfo> getPrinterColumns() {
       return findRepeatingAnnotations(crInfo.definition(), annotationClass).stream()
           .map(this::map)
           .toList();

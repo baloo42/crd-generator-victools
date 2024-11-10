@@ -1,17 +1,17 @@
 package io.fabric8.crd.generator.victools.schema;
 
-import io.fabric8.crd.generator.victools.AdditionalPrinterColumnProvider;
 import io.fabric8.crd.generator.victools.CustomResourceInfo;
+import io.fabric8.crd.generator.victools.PrinterColumnProvider;
 import io.fabric8.crd.generator.victools.annotation.AdditionalPrinterColumn;
 import io.fabric8.crd.generator.victools.model.PrinterColumnInfo;
 
 import static io.fabric8.crd.generator.victools.CRDUtils.emptyToNull;
 import static io.fabric8.crd.generator.victools.CRDUtils.zeroToNull;
 
-public class PrinterColumnProvider
-    extends AdditionalPrinterColumnProvider.TopLevelAnnotationPrinterColumnProvider<AdditionalPrinterColumn> {
+public class AdditionalPrinterColumnProvider
+    extends PrinterColumnProvider.TopLevelAnnotationPrinterColumnProvider<AdditionalPrinterColumn> {
 
-  public PrinterColumnProvider(CustomResourceInfo crInfo) {
+  public AdditionalPrinterColumnProvider(CustomResourceInfo crInfo) {
     super(crInfo, AdditionalPrinterColumn.class);
   }
 

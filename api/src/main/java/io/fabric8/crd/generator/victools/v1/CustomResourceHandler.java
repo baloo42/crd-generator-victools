@@ -23,8 +23,9 @@ import io.fabric8.crd.generator.victools.CRDGeneratorSchemaOption;
 import io.fabric8.crd.generator.victools.CRDResult;
 import io.fabric8.crd.generator.victools.CustomResourceContext;
 import io.fabric8.crd.generator.victools.CustomResourceInfo;
-import io.fabric8.crd.generator.victools.schema.PrinterColumnProvider;
+import io.fabric8.crd.generator.victools.PrinterColumnProvider;
 import io.fabric8.crd.generator.victools.SelectableFieldProvider;
+import io.fabric8.crd.generator.victools.schema.AdditionalPrinterColumnProvider;
 import io.fabric8.crd.generator.victools.schema.AdditionalSelectableFieldProvider;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinition;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionBuilder;
@@ -87,8 +88,9 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
     // <<< Schema-Generation Phase ---
 
     // >>> Post-Processing Phase ---
-    var printerColumnProviders = new LinkedList<AdditionalPrinterColumnProvider>();
-    printerColumnProviders.add(new PrinterColumnProvider(crInfo));
+    var printerColumnProviders = new LinkedList<PrinterColumnProvider>();
+    printerColumnProviders.add(new AdditionalPrinterColumnProvider(crInfo));
+    // TODO: add FkcAdditionalPrinterColumnProvider(crInfo) once updated to fabric8/kubernetes-client v7
 
     var selectableFieldProviders = new LinkedList<SelectableFieldProvider>();
     selectableFieldProviders.add(new AdditionalSelectableFieldProvider(crInfo));
