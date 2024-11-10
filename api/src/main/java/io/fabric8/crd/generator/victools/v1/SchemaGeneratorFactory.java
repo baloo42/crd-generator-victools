@@ -12,19 +12,27 @@ import io.fabric8.crd.generator.victools.CRDGeneratorContextInternal;
 import io.fabric8.crd.generator.victools.CRDGeneratorSchemaOption;
 import io.fabric8.crd.generator.victools.CustomResourceContext;
 import io.fabric8.crd.generator.victools.schema.ConstToEnumInAllOfModule;
+import io.fabric8.crd.generator.victools.schema.DependentClassesModule;
 import io.fabric8.crd.generator.victools.schema.EmbeddedResourceModule;
 import io.fabric8.crd.generator.victools.schema.ExplicitNullableModule;
 import io.fabric8.crd.generator.victools.schema.ExternalDocsModule;
-import io.fabric8.crd.generator.victools.schema.FkcValidationModule;
 import io.fabric8.crd.generator.victools.schema.ImplicitMapModule;
 import io.fabric8.crd.generator.victools.schema.IntOrStringModule;
 import io.fabric8.crd.generator.victools.schema.JacksonEnumModule;
 import io.fabric8.crd.generator.victools.schema.KubernetesMapTypeModule;
 import io.fabric8.crd.generator.victools.schema.MetadataModule;
-import io.fabric8.crd.generator.victools.schema.PreserveUnknownFieldsModule;
-import io.fabric8.crd.generator.victools.schema.SchemaFromModule;
+import io.fabric8.crd.generator.victools.schema.PrinterColumnProvider;
+import io.fabric8.crd.generator.victools.schema.ScaleSubresourceProvider;
+import io.fabric8.crd.generator.victools.schema.SelectableFieldProvider;
 import io.fabric8.crd.generator.victools.schema.ValidationModule;
+import io.fabric8.crd.generator.victools.schema.fkc.FkcPreserveUnknownFieldsModule;
+import io.fabric8.crd.generator.victools.schema.fkc.FkcPrinterColumnProvider;
+import io.fabric8.crd.generator.victools.schema.fkc.FkcScaleSubresourceProvider;
+import io.fabric8.crd.generator.victools.schema.fkc.FkcSchemaFromModule;
+import io.fabric8.crd.generator.victools.schema.fkc.FkcValidationModule;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.LinkedList;
 
 @Slf4j
 class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
@@ -81,20 +89,38 @@ class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
       builder.with(new Swagger2Module());
     }
 
+    var metadataProvider = new LinkedList<MetadataModule.MetadataProvider>();
+    if (context.isEnabled(CRDGeneratorSchemaOption.FKC_ANNOTATIONS)) {
+      metadataProvider.add(new FkcScaleSubresourceProvider());
+      metadataProvider.add(new FkcPrinterColumnProvider());
+      // TODO: add FkcSelectableFieldProvider once updated to fabric8/kubernetes-client v7
+      // metadataProvider.add(new FkcSelectableFieldProvider());
+
+      builder
+          .with(new FkcSchemaFromModule())
+          .with(new FkcValidationModule())
+          .with(new FkcKubernetesValidationModule(context))
+          .with(new FkcPreserveUnknownFieldsModule(context));
+    }
+    if (context.isEnabled(CRDGeneratorSchemaOption.OWN_ANNOTATIONS)) {
+      metadataProvider.add(new ScaleSubresourceProvider());
+      metadataProvider.add(new PrinterColumnProvider());
+      metadataProvider.add(new SelectableFieldProvider());
+
+      builder
+          .with(new ValidationModule())
+          .with(new ExternalDocsModule())
+          .with(new KubernetesMapTypeModule())
+          .with(new EmbeddedResourceModule());
+    }
+
     builder
-        .with(new SchemaFromModule())
         .with(new JacksonEnumModule())
-        .with(new ValidationModule())
-        .with(new FkcValidationModule())
-        .with(new FkcKubernetesValidationModule(context))
-        .with(new ExternalDocsModule())
         .with(new ImplicitMapModule())
-        .with(new PreserveUnknownFieldsModule(context))
-        .with(new EmbeddedResourceModule())
         .with(new IntOrStringModule())
-        .with(new KubernetesMapTypeModule())
-        .with(new MetadataModule(customResourceContext))
         .with(new ExplicitNullableModule())
-        .with(new ConstToEnumInAllOfModule());
+        .with(new ConstToEnumInAllOfModule())
+        .with(new DependentClassesModule(customResourceContext))
+        .with(new MetadataModule(customResourceContext, metadataProvider));
   }
 }

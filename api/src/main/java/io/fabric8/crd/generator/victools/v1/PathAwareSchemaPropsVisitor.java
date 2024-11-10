@@ -19,8 +19,6 @@ import static java.util.Optional.ofNullable;
  *
  * @see io.fabric8.crd.generator.victools.schema.MetadataModule
  * @see io.fabric8.crd.generator.victools.CustomResourceContext
- * @see PrinterColumnCollector
- * @see ScaleSubresourceCollector
  */
 @Slf4j
 @RequiredArgsConstructor

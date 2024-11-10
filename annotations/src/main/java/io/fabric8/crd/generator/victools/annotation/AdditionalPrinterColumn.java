@@ -20,11 +20,9 @@ import java.lang.annotation.Target;
 public @interface AdditionalPrinterColumn {
 
   /**
-   * The name of the column. An empty column name implies the use of the last path
-   * element.
+   * The name of the column.
    *
-   * @return the column name, or empty string if the last path element should be
-   *         used.
+   * @return the column name
    */
   String name() default "";
 
@@ -47,7 +45,7 @@ public @interface AdditionalPrinterColumn {
    *
    * @return the format or NONE if no format is specified.
    */
-  Format format() default Format.NONE;
+  PrinterColumnFormat format() default PrinterColumnFormat.NONE;
 
   /**
    * The description of the printer column.
@@ -75,30 +73,6 @@ public @interface AdditionalPrinterColumn {
     private final String value;
 
     Type(String value) {
-      this.value = value;
-    }
-
-    public String getValue() {
-      return value;
-    }
-  }
-
-  // https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#format
-  enum Format {
-
-    NONE(""),
-    INT32("int32"),
-    INT64("int64"),
-    FLOAT("float"),
-    DOUBLE("double"),
-    BYTE("byte"),
-    DATE("date"),
-    DATE_TIME("date-time"),
-    PASSWORD("password");
-
-    private final String value;
-
-    Format(String value) {
       this.value = value;
     }
 

@@ -23,6 +23,10 @@ import io.fabric8.crd.generator.victools.CRDGeneratorSchemaOption;
 import io.fabric8.crd.generator.victools.CRDResult;
 import io.fabric8.crd.generator.victools.CustomResourceContext;
 import io.fabric8.crd.generator.victools.CustomResourceInfo;
+import io.fabric8.crd.generator.victools.PrinterColumnProvider;
+import io.fabric8.crd.generator.victools.SelectableFieldProvider;
+import io.fabric8.crd.generator.victools.schema.AdditionalPrinterColumnProvider;
+import io.fabric8.crd.generator.victools.schema.AdditionalSelectableFieldProvider;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinition;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionBuilder;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionVersion;
@@ -31,6 +35,7 @@ import io.fabric8.kubernetes.api.model.apiextensions.v1.JSONSchemaProps;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.JSONSchemaPropsBuilder;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -83,9 +88,22 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
     // <<< Schema-Generation Phase ---
 
     // >>> Post-Processing Phase ---
+    var printerColumnProviders = new LinkedList<PrinterColumnProvider>();
+    var selectableFieldProviders = new LinkedList<SelectableFieldProvider>();
+
+    if (generatorContext.isEnabled(CRDGeneratorSchemaOption.OWN_ANNOTATIONS)) {
+      printerColumnProviders.add(new AdditionalPrinterColumnProvider(crInfo));
+      selectableFieldProviders.add(new AdditionalSelectableFieldProvider(crInfo));
+    }
+
+    if (generatorContext.isEnabled(CRDGeneratorSchemaOption.FKC_ANNOTATIONS)) {
+      // TODO: add FkcAdditionalPrinterColumnProvider(crInfo) once updated to fabric8/kubernetes-client v7
+      // TODO: add FkcAdditionalSelectableFieldProvider(crInfo) once updated to fabric8/kubernetes-client v7
+    }
+
     var conversionCollector = new ConversionCollector(crInfo);
-    var printerColumnCollector = new PrinterColumnCollector(crInfo, customResourceContext);
-    var selectableFieldCollector = new SelectableFieldCollector(crInfo, customResourceContext);
+    var printerColumnCollector = new PrinterColumnCollector(customResourceContext, printerColumnProviders);
+    var selectableFieldCollector = new SelectableFieldCollector(customResourceContext, selectableFieldProviders);
     var scaleSubresourceCollector = new ScaleSubresourceCollector(customResourceContext);
     new PathAwareSchemaPropsVisitor()
         .withDirectPropertyVisitor(printerColumnCollector)
