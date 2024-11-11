@@ -11,8 +11,11 @@ of [jackson/jsonSchema](https://github.com/FasterXML/jackson-module-jsonSchema).
 
 The CRD-Generator allows to generate Custom Resource Definitions (CRD) from a Java model using reflection.
 Annotations can be added to the model to enhance the resulting schema.
+The following annotation sets can be enabled / disabled:
 
 ### Fabric8/kubernetes-client annotations
+
+_Enabled by default_
 
 It's possible to use the annotations from fabric8/kubernetes-client in the same way you might be used to. The output
 should be in most cases exactly the same. The only known difference is, that this implementation doesn't support
@@ -20,23 +23,35 @@ should be in most cases exactly the same. The only known difference is, that thi
 
 ### Own annotations
 
-This project provides also own annotations, which allows us to add new features faster.
+_Enabled by default_
+
+This project provides an own set of annotations, too. This set is at the moment more feature complete
+compared to the set from fabric8/kubernetes-client. 
 
 ### Jackson annotations
 
+_Enabled by default_
+
 A lot Jackson annotations are supported including `@JsonSubTypes` to created `anyOf` schemas.
+
 See [victools/jsonschema-generator Jackson Module](https://victools.github.io/jsonschema-generator/#jackson-module)
 for details.
 
 ### Jakarta Validation annotations
 
+_Disabled by default_
+
 Jakarta validation annotations are supported.
+
 See [victools/jsonschema-generator Jakarta Validation Module](https://victools.github.io/jsonschema-generator/#jakarta-validation-module)
 for details.
 
 ### Swagger 2 annotations
 
+_Disabled by default_
+
 Swagger 2 annotations are supported.
+
 See [victools/jsonschema-generator Swagger 2 Module](https://victools.github.io/jsonschema-generator/#swagger-2-module)
 for details.
 
