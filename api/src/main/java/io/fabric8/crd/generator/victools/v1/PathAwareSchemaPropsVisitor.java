@@ -24,8 +24,8 @@ import static java.util.Optional.ofNullable;
 @RequiredArgsConstructor
 class PathAwareSchemaPropsVisitor {
 
-  private static final String JSONPATH_SEPERATOR = ".";
-  private static final String JSONPATH_SEPERATOR_ARRAY = "[]";
+  private static final String JSONPATH_SEPARATOR = ".";
+  private static final String JSONPATH_SEPARATOR_ARRAY = "[]";
 
   private final List<PropertyVisitor> propertyVisitors = new LinkedList<>();
   private final List<IdentifiedPropertyVisitor> identifiedPropertyVisitors = new LinkedList<>();
@@ -81,15 +81,15 @@ class PathAwareSchemaPropsVisitor {
   }
 
   private void visit(String parentPath, JSONSchemaProps schema) {
+    visitProperty(parentPath, schema);
     if ("object".equals(schema.getType())) {
       for (var prop : schema.getProperties().entrySet()) {
-        var propPath = parentPath + JSONPATH_SEPERATOR + prop.getKey();
+        var propPath = parentPath + JSONPATH_SEPARATOR + prop.getKey();
         var propSchema = prop.getValue();
-        visitProperty(propPath, propSchema);
         visit(propPath, propSchema);
       }
     } else if ("array".equals(schema.getType())) {
-      var path = parentPath + JSONPATH_SEPERATOR_ARRAY;
+      var path = parentPath + JSONPATH_SEPARATOR_ARRAY;
       var itemSchema = schema.getItems().getSchema();
       visit(path, itemSchema);
     }
@@ -129,6 +129,6 @@ class PathAwareSchemaPropsVisitor {
   }
 
   private static boolean isDirectPath(String path) {
-    return !path.contains(JSONPATH_SEPERATOR_ARRAY);
+    return !path.contains(JSONPATH_SEPARATOR_ARRAY);
   }
 }

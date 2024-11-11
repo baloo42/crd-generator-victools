@@ -1,6 +1,7 @@
 package io.fabric8.crd.generator.victools;
 
 import io.fabric8.crd.generator.victools.model.PrinterColumnInfo;
+import io.fabric8.crd.generator.victools.model.ValidationRuleInfo;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -86,6 +89,14 @@ public class CustomResourceContext {
         .orElse(false);
   }
 
+  public void addValidationRule(String fieldId, ValidationRuleInfo rule) {
+    getFieldMeta(fieldId).addValidationRule(rule);
+  }
+
+  public List<ValidationRuleInfo> getValidationRules(String fieldId) {
+    return getFieldMeta(fieldId).getValidationRules();
+  }
+
   private FieldMetadata getFieldMeta(String fieldId) {
     fieldMeta.putIfAbsent(fieldId, new FieldMetadata());
     return fieldMeta.get(fieldId);
@@ -106,6 +117,11 @@ public class CustomResourceContext {
     private boolean statusReplicasPath;
     private boolean labelSelectorPath;
     private boolean selectableFieldPath;
+    private List<ValidationRuleInfo> validationRules = new LinkedList<>();
+
+    public void addValidationRule(ValidationRuleInfo rule) {
+      validationRules.add(rule);
+    }
 
     public Optional<PrinterColumnInfo> getPrinterColumnInfo() {
       return ofNullable(printerColumnInfo);

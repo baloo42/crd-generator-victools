@@ -51,4 +51,8 @@ public class CRDUtils {
   public static Integer zeroToNull(Integer value) {
     return ofNullable(value).filter(i -> i != 0).orElse(null);
   }
+
+  public static Boolean falseToNull(boolean value) {
+    return value ? Boolean.TRUE : null;
+  }
 }

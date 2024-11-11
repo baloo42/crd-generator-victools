@@ -20,11 +20,13 @@ import io.fabric8.crd.generator.victools.schema.ImplicitMapModule;
 import io.fabric8.crd.generator.victools.schema.IntOrStringModule;
 import io.fabric8.crd.generator.victools.schema.JacksonEnumModule;
 import io.fabric8.crd.generator.victools.schema.KubernetesMapTypeModule;
+import io.fabric8.crd.generator.victools.schema.KubernetesValidationRuleProvider;
 import io.fabric8.crd.generator.victools.schema.MetadataModule;
 import io.fabric8.crd.generator.victools.schema.PrinterColumnProvider;
 import io.fabric8.crd.generator.victools.schema.ScaleSubresourceProvider;
 import io.fabric8.crd.generator.victools.schema.SelectableFieldProvider;
 import io.fabric8.crd.generator.victools.schema.ValidationModule;
+import io.fabric8.crd.generator.victools.schema.fkc.FkcKubernetesValidationRuleProvider;
 import io.fabric8.crd.generator.victools.schema.fkc.FkcPreserveUnknownFieldsModule;
 import io.fabric8.crd.generator.victools.schema.fkc.FkcPrinterColumnProvider;
 import io.fabric8.crd.generator.victools.schema.fkc.FkcScaleSubresourceProvider;
@@ -95,17 +97,18 @@ class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
       metadataProvider.add(new FkcPrinterColumnProvider());
       // TODO: add FkcSelectableFieldProvider once updated to fabric8/kubernetes-client v7
       // metadataProvider.add(new FkcSelectableFieldProvider());
+      metadataProvider.add(new FkcKubernetesValidationRuleProvider());
 
       builder
           .with(new FkcSchemaFromModule())
           .with(new FkcValidationModule())
-          .with(new FkcKubernetesValidationModule(context))
           .with(new FkcPreserveUnknownFieldsModule(context));
     }
     if (context.isEnabled(CRDGeneratorSchemaOption.OWN_ANNOTATIONS)) {
       metadataProvider.add(new ScaleSubresourceProvider());
       metadataProvider.add(new PrinterColumnProvider());
       metadataProvider.add(new SelectableFieldProvider());
+      metadataProvider.add(new KubernetesValidationRuleProvider());
 
       builder
           .with(new ValidationModule())
