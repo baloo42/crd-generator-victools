@@ -81,8 +81,6 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
         .forEach(prop -> rootSchemaBuilder.addToProperties(prop.getKey(),
             generatorContext.convertValue(prop.getValue(), JSONSchemaProps.class)));
 
-    //rootSchemaBuilder.addAllToXKubernetesValidations(findTopLevelValidationRules(crInfo));
-
     if (generatorContext.isEnabled(CRDGeneratorSchemaOption.IMPLICIT_REQUIRED_SPEC)) {
       rootSchemaBuilder.withRequired("spec");
     }
