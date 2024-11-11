@@ -1,6 +1,6 @@
 package io.fabric8.crd.generator.victools.schema;
 
-import com.github.victools.jsonschema.generator.FieldScope;
+import com.github.victools.jsonschema.generator.MemberScope;
 import io.fabric8.crd.generator.victools.annotation.PrinterColumn;
 import io.fabric8.crd.generator.victools.model.PrinterColumnInfo;
 
@@ -13,7 +13,7 @@ import static io.fabric8.crd.generator.victools.schema.SchemaGeneratorUtils.find
 public class PrinterColumnProvider implements MetadataModule.MetadataProvider {
 
   @Override
-  public Optional<PrinterColumnInfo> findPrinterColumn(FieldScope scope) {
+  public Optional<PrinterColumnInfo> findPrinterColumn(MemberScope<?, ?> scope) {
     return findAnnotation(scope, PrinterColumn.class)
         .map(annotation -> PrinterColumnInfo.builder()
             .name(emptyToNull(annotation.name()))

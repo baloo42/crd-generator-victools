@@ -1,17 +1,19 @@
 package io.fabric8.crd.generator.victools.schema;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.victools.jsonschema.generator.FieldScope;
+import com.github.victools.jsonschema.generator.MemberScope;
 import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGenerationContext;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaKeyword;
 import io.fabric8.crd.generator.victools.CustomResourceContext;
 import io.fabric8.crd.generator.victools.model.PrinterColumnInfo;
+import io.fabric8.crd.generator.victools.model.ValidationRuleInfo;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,9 +41,10 @@ public class MetadataModule implements Module {
   @Override
   public void applyToConfigBuilder(SchemaGeneratorConfigBuilder builder) {
     builder.forFields().withInstanceAttributeOverride(this::overrideInstanceAttributes);
+    builder.forMethods().withInstanceAttributeOverride(this::overrideInstanceAttributes);
   }
 
-  private void overrideInstanceAttributes(ObjectNode attributes, FieldScope scope, SchemaGenerationContext context) {
+  private void overrideInstanceAttributes(ObjectNode attributes, MemberScope<?, ?> scope, SchemaGenerationContext context) {
     var id = UUID.randomUUID().toString();
     var isIdRequired = new AtomicBoolean(false);
 
@@ -68,6 +71,12 @@ public class MetadataModule implements Module {
         customResourceContext.setPrinterColumnInfo(id, printerColumnOptional.get());
         isIdRequired.set(true);
       }
+
+      var validationRules = provider.getValidationRules(scope);
+      if (!validationRules.isEmpty()) {
+        validationRules.forEach(rule -> customResourceContext.addValidationRule(id, rule));
+        isIdRequired.set(true);
+      }
     }
 
     if (isIdRequired.get()) {
@@ -77,23 +86,27 @@ public class MetadataModule implements Module {
 
   public interface MetadataProvider {
 
-    default boolean isSpecReplicasField(FieldScope scope) {
+    default boolean isSpecReplicasField(MemberScope<?, ?> scope) {
       return false;
     }
 
-    default boolean isStatusReplicasField(FieldScope scope) {
+    default boolean isStatusReplicasField(MemberScope<?, ?> scope) {
       return false;
     }
 
-    default boolean isLabelSelectorField(FieldScope scope) {
+    default boolean isLabelSelectorField(MemberScope<?, ?> scope) {
       return false;
     }
 
-    default boolean isSelectableField(FieldScope scope) {
+    default boolean isSelectableField(MemberScope<?, ?> scope) {
       return false;
     }
 
-    default Optional<PrinterColumnInfo> findPrinterColumn(FieldScope scope) {
+    default List<ValidationRuleInfo> getValidationRules(MemberScope<?, ?> scope) {
+      return Collections.emptyList();
+    }
+
+    default Optional<PrinterColumnInfo> findPrinterColumn(MemberScope<?, ?> scope) {
       return Optional.empty();
     }
   }

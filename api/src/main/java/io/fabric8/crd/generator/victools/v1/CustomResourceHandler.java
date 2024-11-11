@@ -23,10 +23,13 @@ import io.fabric8.crd.generator.victools.CRDGeneratorSchemaOption;
 import io.fabric8.crd.generator.victools.CRDResult;
 import io.fabric8.crd.generator.victools.CustomResourceContext;
 import io.fabric8.crd.generator.victools.CustomResourceInfo;
+import io.fabric8.crd.generator.victools.KubernetesValidationRuleProvider;
 import io.fabric8.crd.generator.victools.PrinterColumnProvider;
 import io.fabric8.crd.generator.victools.SelectableFieldProvider;
+import io.fabric8.crd.generator.victools.schema.AdditionalKubernetesValidationRuleProvider;
 import io.fabric8.crd.generator.victools.schema.AdditionalPrinterColumnProvider;
 import io.fabric8.crd.generator.victools.schema.AdditionalSelectableFieldProvider;
+import io.fabric8.crd.generator.victools.schema.fkc.FkcAdditionalKubernetesValidationRuleProvider;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinition;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionBuilder;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionVersion;
@@ -45,7 +48,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.fabric8.crd.generator.victools.v1.CRDv1Utils.findTopLevelValidationRules;
 import static io.fabric8.kubernetes.client.utils.KubernetesVersionPriority.sortByPriority;
 import static java.util.Optional.ofNullable;
 
@@ -79,7 +81,7 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
         .forEach(prop -> rootSchemaBuilder.addToProperties(prop.getKey(),
             generatorContext.convertValue(prop.getValue(), JSONSchemaProps.class)));
 
-    rootSchemaBuilder.addAllToXKubernetesValidations(findTopLevelValidationRules(crInfo));
+    //rootSchemaBuilder.addAllToXKubernetesValidations(findTopLevelValidationRules(crInfo));
 
     if (generatorContext.isEnabled(CRDGeneratorSchemaOption.IMPLICIT_REQUIRED_SPEC)) {
       rootSchemaBuilder.withRequired("spec");
@@ -90,26 +92,33 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
     // >>> Post-Processing Phase ---
     var printerColumnProviders = new LinkedList<PrinterColumnProvider>();
     var selectableFieldProviders = new LinkedList<SelectableFieldProvider>();
+    var validationRuleProviders = new LinkedList<KubernetesValidationRuleProvider>();
 
     if (generatorContext.isEnabled(CRDGeneratorSchemaOption.OWN_ANNOTATIONS)) {
       printerColumnProviders.add(new AdditionalPrinterColumnProvider(crInfo));
       selectableFieldProviders.add(new AdditionalSelectableFieldProvider(crInfo));
+      validationRuleProviders.add(new AdditionalKubernetesValidationRuleProvider(crInfo));
     }
 
     if (generatorContext.isEnabled(CRDGeneratorSchemaOption.FKC_ANNOTATIONS)) {
       // TODO: add FkcAdditionalPrinterColumnProvider(crInfo) once updated to fabric8/kubernetes-client v7
       // TODO: add FkcAdditionalSelectableFieldProvider(crInfo) once updated to fabric8/kubernetes-client v7
+      validationRuleProviders.add(new FkcAdditionalKubernetesValidationRuleProvider(crInfo));
     }
 
     var conversionCollector = new ConversionCollector(crInfo);
     var printerColumnCollector = new PrinterColumnCollector(customResourceContext, printerColumnProviders);
     var selectableFieldCollector = new SelectableFieldCollector(customResourceContext, selectableFieldProviders);
     var scaleSubresourceCollector = new ScaleSubresourceCollector(customResourceContext);
+    var kubernetesValidationCollector = new KubernetesValidationCollector(customResourceContext, validationRuleProviders);
     new PathAwareSchemaPropsVisitor()
         .withDirectPropertyVisitor(printerColumnCollector)
         .withDirectPropertyVisitor(selectableFieldCollector)
         .withDirectPropertyVisitor(scaleSubresourceCollector)
+        .withPropertyVisitor(kubernetesValidationCollector)
         .visit(rootSchema);
+
+    rootSchema.setXKubernetesValidations(kubernetesValidationCollector.getTopLevelValidationRules());
 
     CustomResourceDefinitionVersionBuilder builder = new CustomResourceDefinitionVersionBuilder()
         .withName(version)
