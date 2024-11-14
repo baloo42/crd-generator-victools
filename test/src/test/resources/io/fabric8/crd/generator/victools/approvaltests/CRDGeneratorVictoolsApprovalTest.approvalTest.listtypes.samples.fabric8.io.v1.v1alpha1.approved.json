@@ -1,0 +1,169 @@
+{
+  "properties" : {
+    "spec" : {
+      "properties" : {
+        "arrayListTypeAtomicString" : {
+          "items" : {
+            "type" : "string"
+          },
+          "type" : "array",
+          "x-kubernetes-list-type" : "atomic"
+        },
+        "arrayListTypeMapWithOneKey" : {
+          "items" : {
+            "properties" : {
+              "id" : {
+                "type" : "integer"
+              },
+              "name" : {
+                "type" : "string"
+              }
+            },
+            "type" : "object"
+          },
+          "type" : "array",
+          "x-kubernetes-list-map-keys" : [ "id" ],
+          "x-kubernetes-list-type" : "map"
+        },
+        "arrayListTypeMapWithOneKeyNotAnnotated" : {
+          "items" : {
+            "properties" : {
+              "id" : {
+                "type" : "integer"
+              },
+              "name" : {
+                "type" : "string"
+              }
+            },
+            "type" : "object"
+          },
+          "type" : "array",
+          "x-kubernetes-list-map-keys" : [ "id" ],
+          "x-kubernetes-list-type" : "map"
+        },
+        "arrayListTypeMapWithTwoKeyNotAnnotated" : {
+          "items" : {
+            "properties" : {
+              "id" : {
+                "type" : "integer"
+              },
+              "name" : {
+                "type" : "string"
+              }
+            },
+            "type" : "object"
+          },
+          "type" : "array",
+          "x-kubernetes-list-map-keys" : [ "id", "name" ],
+          "x-kubernetes-list-type" : "map"
+        },
+        "arrayListTypeMapWithTwoKeys" : {
+          "items" : {
+            "properties" : {
+              "id" : {
+                "type" : "integer"
+              },
+              "name" : {
+                "type" : "string"
+              }
+            },
+            "type" : "object"
+          },
+          "type" : "array",
+          "x-kubernetes-list-map-keys" : [ "id", "name" ],
+          "x-kubernetes-list-type" : "map"
+        },
+        "arrayListTypeSetString" : {
+          "items" : {
+            "type" : "string"
+          },
+          "type" : "array",
+          "x-kubernetes-list-type" : "set"
+        },
+        "listTypeAtomicString" : {
+          "items" : {
+            "type" : "string"
+          },
+          "type" : "array",
+          "x-kubernetes-list-type" : "atomic"
+        },
+        "listTypeMapWithOneKey" : {
+          "items" : {
+            "properties" : {
+              "id" : {
+                "type" : "integer"
+              },
+              "name" : {
+                "type" : "string"
+              }
+            },
+            "type" : "object"
+          },
+          "type" : "array",
+          "x-kubernetes-list-map-keys" : [ "id" ],
+          "x-kubernetes-list-type" : "map"
+        },
+        "listTypeMapWithOneKeyNotAnnotated" : {
+          "items" : {
+            "properties" : {
+              "id" : {
+                "type" : "integer"
+              },
+              "name" : {
+                "type" : "string"
+              }
+            },
+            "type" : "object"
+          },
+          "type" : "array",
+          "x-kubernetes-list-map-keys" : [ "id" ],
+          "x-kubernetes-list-type" : "map"
+        },
+        "listTypeMapWithTwoKeyNotAnnotated" : {
+          "items" : {
+            "properties" : {
+              "id" : {
+                "type" : "integer"
+              },
+              "name" : {
+                "type" : "string"
+              }
+            },
+            "type" : "object"
+          },
+          "type" : "array",
+          "x-kubernetes-list-map-keys" : [ "id", "name" ],
+          "x-kubernetes-list-type" : "map"
+        },
+        "listTypeMapWithTwoKeys" : {
+          "items" : {
+            "properties" : {
+              "id" : {
+                "type" : "integer"
+              },
+              "name" : {
+                "type" : "string"
+              }
+            },
+            "type" : "object"
+          },
+          "type" : "array",
+          "x-kubernetes-list-map-keys" : [ "id", "name" ],
+          "x-kubernetes-list-type" : "map"
+        },
+        "listTypeSetString" : {
+          "items" : {
+            "type" : "string"
+          },
+          "type" : "array",
+          "x-kubernetes-list-type" : "set"
+        }
+      },
+      "type" : "object"
+    },
+    "status" : {
+      "type" : "object"
+    }
+  },
+  "type" : "object"
+}

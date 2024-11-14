@@ -19,6 +19,7 @@ import io.fabric8.crd.generator.victools.schema.ExternalDocsModule;
 import io.fabric8.crd.generator.victools.schema.ImplicitMapModule;
 import io.fabric8.crd.generator.victools.schema.IntOrStringModule;
 import io.fabric8.crd.generator.victools.schema.JacksonEnumModule;
+import io.fabric8.crd.generator.victools.schema.KubernetesListTypeModule;
 import io.fabric8.crd.generator.victools.schema.KubernetesMapTypeModule;
 import io.fabric8.crd.generator.victools.schema.KubernetesValidationRuleProvider;
 import io.fabric8.crd.generator.victools.schema.MetadataModule;
@@ -92,6 +93,7 @@ class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
     }
 
     var metadataProvider = new LinkedList<MetadataModule.MetadataProvider>();
+
     if (context.isEnabled(CRDGeneratorSchemaOption.FKC_ANNOTATIONS)) {
       metadataProvider.add(new FkcScaleSubresourceProvider());
       metadataProvider.add(new FkcPrinterColumnProvider());
@@ -104,6 +106,7 @@ class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
           .with(new FkcValidationModule())
           .with(new FkcPreserveUnknownFieldsModule(context));
     }
+
     if (context.isEnabled(CRDGeneratorSchemaOption.OWN_ANNOTATIONS)) {
       metadataProvider.add(new ScaleSubresourceProvider());
       metadataProvider.add(new PrinterColumnProvider());
@@ -114,6 +117,7 @@ class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
           .with(new ValidationModule())
           .with(new ExternalDocsModule())
           .with(new KubernetesMapTypeModule())
+          .with(new KubernetesListTypeModule())
           .with(new EmbeddedResourceModule());
     }
 

@@ -8,8 +8,9 @@ public enum KubernetesSchemaKeyword {
   KUBERNETES_EMBEDDED_RESOURCE("x-kubernetes-embedded-resource"),
   KUBERNETES_PRESERVE_UNKNOWN_FIELDS("x-kubernetes-preserve-unknown-fields"),
   KUBERNETES_INT_OR_STRING("x-kubernetes-int-or-string"),
+  KUBERNETES_MAP_TYPE("x-kubernetes-map-type"),
   KUBERNETES_LIST_TYPE("x-kubernetes-list-type"),
-  KUBERNETES_MAP_TYPE("x-kubernetes-map-type");
+  KUBERNETES_LIST_MAP_KEYS("x-kubernetes-list-map-keys");
 
   private final String value;
 
