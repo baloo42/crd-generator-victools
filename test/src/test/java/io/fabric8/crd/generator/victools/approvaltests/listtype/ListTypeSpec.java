@@ -21,10 +21,10 @@ public class ListTypeSpec {
   @ListType(ListType.Type.MAP)
   private List<EntityWithTwoKeys> listTypeMapWithTwoKeys;
 
-  @ListType(value = ListType.Type.MAP, mapKeys = {"id"})
+  @ListType(value = ListType.Type.MAP, mapKeys = { "id" })
   private List<NotAnnotated> listTypeMapWithOneKeyNotAnnotated;
 
-  @ListType(value = ListType.Type.MAP, mapKeys = {"id", "name"})
+  @ListType(value = ListType.Type.MAP, mapKeys = { "id", "name" })
   private List<NotAnnotated> listTypeMapWithTwoKeyNotAnnotated;
 
   @ListType(ListType.Type.ATOMIC)
@@ -39,10 +39,10 @@ public class ListTypeSpec {
   @ListType(ListType.Type.MAP)
   private EntityWithTwoKeys[] arrayListTypeMapWithTwoKeys;
 
-  @ListType(value = ListType.Type.MAP, mapKeys = {"id"})
+  @ListType(value = ListType.Type.MAP, mapKeys = { "id" })
   private NotAnnotated[] arrayListTypeMapWithOneKeyNotAnnotated;
 
-  @ListType(value = ListType.Type.MAP, mapKeys = {"id", "name"})
+  @ListType(value = ListType.Type.MAP, mapKeys = { "id", "name" })
   private NotAnnotated[] arrayListTypeMapWithTwoKeyNotAnnotated;
 
   @Data
