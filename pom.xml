@@ -4,7 +4,7 @@
 
   <groupId>io.fabric8.crd-generator.victools</groupId>
   <artifactId>crd-generator-victools</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -21,7 +21,7 @@
   <scm>
     <connection>scm:git:git@github.com:baloo42/crd-generator-victools.git</connection>
     <developerConnection>scm:git:git@github.com:baloo42/crd-generator-victools.git</developerConnection>
-    <tag>v0.0.1</tag>
+    <tag>${project.version}</tag>
     <url>https://github.com/baloo42/crd-generator-victools/</url>
   </scm>
 
@@ -292,8 +292,8 @@
             <importOrder>
               <file>ide-config/eclipse.importorder</file>
             </importOrder>
-            <removeUnusedImports />
-            <toggleOffOn />
+            <removeUnusedImports/>
+            <toggleOffOn/>
           </java>
           <groovy>
             <includes>
@@ -301,8 +301,8 @@
               <include>src/test/groovy/**/*.groovy</include>
               <include>src/it/**/*.groovy</include>
             </includes>
-            <importOrder />
-            <greclipse />
+            <importOrder/>
+            <greclipse/>
           </groovy>
           <pom>
             <sortPom>
