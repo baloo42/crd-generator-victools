@@ -11,7 +11,7 @@ of [jackson/jsonSchema](https://github.com/FasterXML/jackson-module-jsonSchema).
 
 The CRD-Generator allows to generate Custom Resource Definitions (CRD) from a Java model using reflection.
 Annotations can be added to the model to enhance the resulting schema.
-The following annotation sets can be enabled / disabled:
+The following annotation sets can be used:
 
 ### Fabric8/kubernetes-client annotations
 
