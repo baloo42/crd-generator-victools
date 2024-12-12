@@ -307,6 +307,8 @@
           <pom>
             <sortPom>
               <expandEmptyElements>false</expandEmptyElements>
+              <!-- required to be compatible to maven release plugin -->
+              <spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
             </sortPom>
           </pom>
         </configuration>
