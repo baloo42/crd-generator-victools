@@ -49,8 +49,8 @@
       <artifactId>api</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.fabric8.crd-generator.victools</groupId>
-      <artifactId>collector</artifactId>
+      <groupId>io.fabric8</groupId>
+      <artifactId>crd-generator-collector</artifactId>
     </dependency>
 
     <!-- Testing -->

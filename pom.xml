@@ -13,7 +13,6 @@
     <module>api</module>
     <module>compliance-test</module>
     <module>test</module>
-    <module>collector</module>
     <module>maven-plugin</module>
     <module>cli</module>
   </modules>
@@ -181,11 +180,6 @@
       <dependency>
         <groupId>io.fabric8.crd-generator.victools</groupId>
         <artifactId>api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.fabric8.crd-generator.victools</groupId>
-        <artifactId>collector</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>
