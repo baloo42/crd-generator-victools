@@ -21,7 +21,7 @@ public class FkcPrinterColumnProvider implements MetadataModule.MetadataProvider
   private PrinterColumnInfo mapPrinterColumn(PrinterColumn annotation) {
     return PrinterColumnInfo.builder()
         .name(emptyToNull(annotation.name()))
-        .format(emptyToNull(annotation.format()))
+        .format(annotation.format().getValue())
         .priority(annotation.priority()) // TODO: omit zero
         .build();
   }
