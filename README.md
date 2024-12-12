@@ -85,9 +85,6 @@ with the fully qualified class name of the module implementation.
   Contains interfaces to extend the CRD-Generator.
 - `api`  
   Implementation and main interface.
-- `collector`  
-  Allows to search for custom resource classes. Backported from fabric8/kubernetes-client.
-  Can be replaced with the implementation from fabric8/kubernetes-client once v7 is released.
 - `cli`  
   Command line interface using this implementation.
 - `maven-plugin`  
