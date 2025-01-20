@@ -56,7 +56,7 @@
     <junit.version>5.11.4</junit.version>
     <jakarta-validation-api.version>3.1.0</jakarta-validation-api.version>
     <javax-validation-api.version>2.0.1.Final</javax-validation-api.version>
-    <assertj.core.version>3.27.2</assertj.core.version>
+    <assertj.core.version>3.27.3</assertj.core.version>
     <approvaltests.version>24.14.2</approvaltests.version>
     <mockito.version>5.15.2</mockito.version>
 
