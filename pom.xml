@@ -54,7 +54,7 @@
     <maven-plugin-annotations.version>3.15.1</maven-plugin-annotations.version>
 
     <junit.version>5.11.4</junit.version>
-    <jakarta-validation-api.version>3.1.0</jakarta-validation-api.version>
+    <jakarta-validation-api.version>3.1.1</jakarta-validation-api.version>
     <javax-validation-api.version>2.0.1.Final</javax-validation-api.version>
     <assertj.core.version>3.27.3</assertj.core.version>
     <approvaltests.version>24.15.0</approvaltests.version>
