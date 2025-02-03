@@ -39,7 +39,7 @@
     <maven.release.version>3.1.1</maven.release.version>
 
     <spotless-maven-plugin.version>2.44.2</spotless-maven-plugin.version>
-    <jandex-maven-plugin.version>3.2.3</jandex-maven-plugin.version>
+    <jandex-maven-plugin.version>3.2.4</jandex-maven-plugin.version>
     <really-executable-jar-maven-plugin.version>2.1.1</really-executable-jar-maven-plugin.version>
 
     <!-- Dependencies -->
