@@ -48,7 +48,7 @@
     <lombok.version>1.18.34</lombok.version>
     <picocli.version>4.7.6</picocli.version>
     <slf4j.version>2.0.16</slf4j.version>
-    <jandex.version>3.2.5</jandex.version>
+    <jandex.version>3.2.6</jandex.version>
     <log4j.version>2.24.3</log4j.version>
     <maven-core.version>3.9.9</maven-core.version>
     <maven-plugin-annotations.version>3.15.1</maven-plugin-annotations.version>
