@@ -58,7 +58,7 @@
     <javax-validation-api.version>2.0.1.Final</javax-validation-api.version>
     <assertj.core.version>3.27.3</assertj.core.version>
     <approvaltests.version>24.19.0</approvaltests.version>
-    <mockito.version>5.16.1</mockito.version>
+    <mockito.version>5.17.0</mockito.version>
 
     <skipTests>false</skipTests>
   </properties>
