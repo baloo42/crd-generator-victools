@@ -46,7 +46,7 @@
     <fabric8-client.version>7.0.1</fabric8-client.version>
     <victools-jsonschema.version>4.38.0</victools-jsonschema.version>
     <lombok.version>1.18.34</lombok.version>
-    <picocli.version>4.7.6</picocli.version>
+    <picocli.version>4.7.7</picocli.version>
     <slf4j.version>2.0.17</slf4j.version>
     <jandex.version>3.2.7</jandex.version>
     <log4j.version>2.24.3</log4j.version>
