@@ -260,8 +260,8 @@ public class CrdGeneratorMojo extends AbstractMojo {
     for (Artifact artifact : mavenProject.getArtifacts()) {
       if (artifact.getGroupId().equals(dependency.getGroupId())
           && artifact.getArtifactId().equals(dependency.getArtifactId())
-          && (dependency.getClassifier() == null || artifact.getClassifier()
-              .equals(dependency.getClassifier()))) {
+          && (dependency.getClassifier() == null
+              || dependency.getClassifier().equals(artifact.getClassifier()))) {
         File jarFile = artifact.getFile();
         if (jarFile == null) {
           getLog().warn(

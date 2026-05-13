@@ -83,15 +83,23 @@ class PathAwareSchemaPropsVisitor {
   private void visit(String parentPath, JSONSchemaProps schema) {
     visitProperty(parentPath, schema);
     if ("object".equals(schema.getType())) {
-      for (var prop : schema.getProperties().entrySet()) {
-        var propPath = parentPath + JSONPATH_SEPARATOR + prop.getKey();
-        var propSchema = prop.getValue();
-        visit(propPath, propSchema);
+      var properties = schema.getProperties();
+      if (properties != null) {
+        for (var prop : properties.entrySet()) {
+          var propPath = parentPath + JSONPATH_SEPARATOR + prop.getKey();
+          var propSchema = prop.getValue();
+          visit(propPath, propSchema);
+        }
       }
     } else if ("array".equals(schema.getType())) {
       var path = parentPath + JSONPATH_SEPARATOR_ARRAY;
-      var itemSchema = schema.getItems().getSchema();
-      visit(path, itemSchema);
+      var items = schema.getItems();
+      if (items != null) {
+        var itemSchema = items.getSchema();
+        if (itemSchema != null) {
+          visit(path, itemSchema);
+        }
+      }
     }
   }
 
