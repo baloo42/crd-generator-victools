@@ -52,6 +52,11 @@
       <groupId>io.fabric8</groupId>
       <artifactId>crd-generator-collector</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <scope>runtime</scope>
+    </dependency>
 
     <!-- Testing -->
     <dependency>
