@@ -43,6 +43,23 @@ spec:
                     minimum: 1.0
                     type: "number"
                 type: "object"
+              onExclusive:
+                properties:
+                  exclusiveMaximum3:
+                    exclusiveMaximum: true
+                    maximum: 3.0
+                    type: "integer"
+                  exclusiveMinimum1:
+                    exclusiveMinimum: true
+                    minimum: 1.0
+                    type: "integer"
+                  exclusiveMinimum1Maximum3:
+                    exclusiveMaximum: true
+                    exclusiveMinimum: true
+                    maximum: 3.0
+                    minimum: 1.0
+                    type: "integer"
+                type: "object"
               onFloat:
                 properties:
                   maximum1:
@@ -120,6 +137,25 @@ spec:
                     maximum: 3.0
                     minimum: 1.0
                     type: "integer"
+                type: "object"
+              onSize:
+                properties:
+                  list:
+                    items:
+                      type: "string"
+                    maxItems: 5
+                    minItems: 1
+                    type: "array"
+                  map:
+                    additionalProperties:
+                      type: "string"
+                    maxProperties: 4
+                    minProperties: 1
+                    type: "object"
+                  string:
+                    maxLength: 10
+                    minLength: 2
+                    type: "string"
                 type: "object"
               onString:
                 properties:
