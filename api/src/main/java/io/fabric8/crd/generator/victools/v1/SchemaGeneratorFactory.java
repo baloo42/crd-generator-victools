@@ -32,6 +32,7 @@ import io.fabric8.crd.generator.victools.schema.fkc.FkcPreserveUnknownFieldsModu
 import io.fabric8.crd.generator.victools.schema.fkc.FkcPrinterColumnProvider;
 import io.fabric8.crd.generator.victools.schema.fkc.FkcScaleSubresourceProvider;
 import io.fabric8.crd.generator.victools.schema.fkc.FkcSchemaFromModule;
+import io.fabric8.crd.generator.victools.schema.fkc.FkcSelectableFieldProvider;
 import io.fabric8.crd.generator.victools.schema.fkc.FkcValidationModule;
 import lombok.extern.slf4j.Slf4j;
 
@@ -97,8 +98,7 @@ class SchemaGeneratorFactory extends AbstractSchemaGeneratorFactory {
     if (context.isEnabled(CRDGeneratorSchemaOption.FKC_ANNOTATIONS)) {
       metadataProvider.add(new FkcScaleSubresourceProvider());
       metadataProvider.add(new FkcPrinterColumnProvider());
-      // TODO: add FkcSelectableFieldProvider once updated to fabric8/kubernetes-client v7
-      // metadataProvider.add(new FkcSelectableFieldProvider());
+      metadataProvider.add(new FkcSelectableFieldProvider());
       metadataProvider.add(new FkcKubernetesValidationRuleProvider());
 
       builder
