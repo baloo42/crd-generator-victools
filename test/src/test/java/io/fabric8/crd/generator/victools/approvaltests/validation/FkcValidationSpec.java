@@ -3,7 +3,11 @@ package io.fabric8.crd.generator.victools.approvaltests.validation;
 import io.fabric8.generator.annotation.Max;
 import io.fabric8.generator.annotation.Min;
 import io.fabric8.generator.annotation.Pattern;
+import io.fabric8.generator.annotation.Size;
 import lombok.Data;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Tests for Fabric8 validation annotations
@@ -20,6 +24,8 @@ public class FkcValidationSpec {
   private ValidationOnDouble onDouble;
   private ValidationOnDoublePrim onDoublePrim;
   private ValidationOnString onString;
+  private ValidationExclusive onExclusive;
+  private ValidationSize onSize;
 
   @Data
   static class ValidationOnInteger {
@@ -113,6 +119,27 @@ public class FkcValidationSpec {
   static class ValidationOnString {
     @Pattern("(a|b)+")
     private String pattern;
+  }
+
+  @Data
+  static class ValidationExclusive {
+    @Min(value = 1, inclusive = false)
+    private Integer exclusiveMinimum1;
+    @Max(value = 3, inclusive = false)
+    private Integer exclusiveMaximum3;
+    @Min(value = 1, inclusive = false)
+    @Max(value = 3, inclusive = false)
+    private Integer exclusiveMinimum1Maximum3;
+  }
+
+  @Data
+  static class ValidationSize {
+    @Size(min = 1, max = 5)
+    private List<String> list;
+    @Size(min = 2, max = 10)
+    private String string;
+    @Size(min = 1, max = 4)
+    private Map<String, String> map;
   }
 
 }

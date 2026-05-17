@@ -27,8 +27,8 @@ public abstract class AbstractValidationModule implements Module {
     builder.forFields().withNumberExclusiveMaximumResolver(this::resolveNumberExclusiveMaximum);
 
     builder.forFields().withStringPatternResolver(this::resolvePattern);
-    builder.forMethods().withStringMinLengthResolver(this::resolveStringMinLength);
-    builder.forMethods().withStringMaxLengthResolver(this::resolveStringMaxLength);
+    builder.forFields().withStringMinLengthResolver(this::resolveStringMinLength);
+    builder.forFields().withStringMaxLengthResolver(this::resolveStringMaxLength);
 
     builder.forFields().withArrayMinItemsResolver(this::resolveArrayMinItems);
     builder.forFields().withArrayMaxItemsResolver(this::resolveArrayMaxItems);
@@ -95,6 +95,28 @@ public abstract class AbstractValidationModule implements Module {
       overridePropertyCountAttribute(attributes,
           context.getKeyword(SchemaKeyword.TAG_PROPERTIES_MAX),
           resolveMapMaxEntries(member), Math::max);
+    }
+
+    // Kubernetes structural schemas (apiextensions.k8s.io/v1) follow JSON Schema
+    // draft-4: exclusiveMinimum/exclusiveMaximum are booleans modifying
+    // minimum/maximum. victools emits draft-6 numeric values, so translate them.
+    rewriteExclusiveBoundToKubernetes(attributes,
+        context.getKeyword(SchemaKeyword.TAG_MINIMUM_EXCLUSIVE),
+        context.getKeyword(SchemaKeyword.TAG_MINIMUM));
+    rewriteExclusiveBoundToKubernetes(attributes,
+        context.getKeyword(SchemaKeyword.TAG_MAXIMUM_EXCLUSIVE),
+        context.getKeyword(SchemaKeyword.TAG_MAXIMUM));
+  }
+
+  private void rewriteExclusiveBoundToKubernetes(
+      ObjectNode attributes,
+      String exclusiveAttribute,
+      String inclusiveAttribute) {
+
+    JsonNode exclusiveValue = attributes.get(exclusiveAttribute);
+    if (exclusiveValue != null && exclusiveValue.isNumber()) {
+      attributes.set(inclusiveAttribute, exclusiveValue);
+      attributes.put(exclusiveAttribute, true);
     }
   }
 
