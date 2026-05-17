@@ -21,6 +21,7 @@ import io.fabric8.crd.generator.victools.approvaltests.externaldocs.ExternalDoc;
 import io.fabric8.crd.generator.victools.approvaltests.k8svalidation.K8sValidation;
 import io.fabric8.crd.generator.victools.approvaltests.listtype.ListType;
 import io.fabric8.crd.generator.victools.approvaltests.maptype.MapType;
+import io.fabric8.crd.generator.victools.approvaltests.printercolum.FkcPrinterColumn;
 import io.fabric8.crd.generator.victools.approvaltests.printercolum.PrinterColumn;
 import io.fabric8.crd.generator.victools.approvaltests.replica.Replica;
 import io.fabric8.crd.generator.victools.approvaltests.schemafrom.SchemaFrom;
@@ -111,6 +112,7 @@ class CRDGeneratorVictoolsApprovalTest {
       cases.add(new TestCase("listtypes.samples.fabric8.io", crdVersion, parallel, ListType.class));
       cases.add(new TestCase("subtypes.samples.fabric8.io", crdVersion, parallel, SubType.class));
       cases.add(new TestCase("printercolumns.samples.fabric8.io", crdVersion, parallel, PrinterColumn.class));
+      cases.add(new TestCase("fkcprintercolumns.samples.fabric8.io", crdVersion, parallel, FkcPrinterColumn.class));
       cases.add(new TestCase("selectablefields.samples.fabric8.io", crdVersion, parallel, SelectableField.class));
       cases.add(new TestCase("fkcselectablefields.samples.fabric8.io", crdVersion, parallel, FkcSelectableField.class));
       cases.add(new TestCase("schemafroms.samples.fabric8.io", crdVersion, parallel, SchemaFrom.class));
