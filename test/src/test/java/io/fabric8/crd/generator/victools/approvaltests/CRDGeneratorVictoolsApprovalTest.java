@@ -24,6 +24,7 @@ import io.fabric8.crd.generator.victools.approvaltests.maptype.MapType;
 import io.fabric8.crd.generator.victools.approvaltests.printercolum.PrinterColumn;
 import io.fabric8.crd.generator.victools.approvaltests.replica.Replica;
 import io.fabric8.crd.generator.victools.approvaltests.schemafrom.SchemaFrom;
+import io.fabric8.crd.generator.victools.approvaltests.selectablefield.FkcSelectableField;
 import io.fabric8.crd.generator.victools.approvaltests.selectablefield.SelectableField;
 import io.fabric8.crd.generator.victools.approvaltests.subtype.SubType;
 import io.fabric8.crd.generator.victools.approvaltests.validation.FkcValidation;
@@ -111,6 +112,7 @@ class CRDGeneratorVictoolsApprovalTest {
       cases.add(new TestCase("subtypes.samples.fabric8.io", crdVersion, parallel, SubType.class));
       cases.add(new TestCase("printercolumns.samples.fabric8.io", crdVersion, parallel, PrinterColumn.class));
       cases.add(new TestCase("selectablefields.samples.fabric8.io", crdVersion, parallel, SelectableField.class));
+      cases.add(new TestCase("fkcselectablefields.samples.fabric8.io", crdVersion, parallel, FkcSelectableField.class));
       cases.add(new TestCase("schemafroms.samples.fabric8.io", crdVersion, parallel, SchemaFrom.class));
       cases.add(new TestCase("deprecationexamples.samples.fabric8.io", crdVersion, parallel,
           io.fabric8.crd.generator.victools.approvaltests.deprecated.v1.DeprecationExample.class,

@@ -30,6 +30,7 @@ import io.fabric8.crd.generator.victools.schema.AdditionalKubernetesValidationRu
 import io.fabric8.crd.generator.victools.schema.AdditionalPrinterColumnProvider;
 import io.fabric8.crd.generator.victools.schema.AdditionalSelectableFieldProvider;
 import io.fabric8.crd.generator.victools.schema.fkc.FkcAdditionalKubernetesValidationRuleProvider;
+import io.fabric8.crd.generator.victools.schema.fkc.FkcAdditionalSelectableFieldProvider;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinition;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionBuilder;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionVersion;
@@ -100,7 +101,7 @@ class CustomResourceHandler extends AbstractCustomResourceHandler {
 
     if (generatorContext.isEnabled(CRDGeneratorSchemaOption.FKC_ANNOTATIONS)) {
       // TODO: add FkcAdditionalPrinterColumnProvider(crInfo) once updated to fabric8/kubernetes-client v7
-      // TODO: add FkcAdditionalSelectableFieldProvider(crInfo) once updated to fabric8/kubernetes-client v7
+      selectableFieldProviders.add(new FkcAdditionalSelectableFieldProvider(crInfo));
       validationRuleProviders.add(new FkcAdditionalKubernetesValidationRuleProvider(crInfo));
     }
 
