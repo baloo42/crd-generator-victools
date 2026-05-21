@@ -1,18 +1,22 @@
 package io.fabric8.crd.generator.victools.schema;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.victools.jsonschema.generator.MemberScope;
 import com.github.victools.jsonschema.generator.Module;
 import com.github.victools.jsonschema.generator.SchemaGenerationContext;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaKeyword;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.function.ToIntBiFunction;
 
+@Slf4j
 public abstract class AbstractValidationModule implements Module {
   @Override
   public void applyToConfigBuilder(SchemaGeneratorConfigBuilder builder) {
@@ -56,6 +60,30 @@ public abstract class AbstractValidationModule implements Module {
   }
 
   protected abstract Object resolveDefault(MemberScope<?, ?> member, ObjectMapper objectMapper);
+
+  /**
+   * Parses the string payload of a {@code @Default} annotation into a JSON node whose Jackson type
+   * matches the annotated member's declared Java type, so the emitted CRD {@code default:} value is
+   * not always a quoted string. String-like and enum members keep the literal value as a
+   * {@code TextNode}; all other types are parsed as JSON (e.g. {@code "5"} → {@code IntNode},
+   * {@code "true"} → {@code BooleanNode}, {@code "[1,2]"} → {@code ArrayNode}). Invalid JSON on a
+   * non-string member is logged and treated as no default.
+   */
+  protected static JsonNode parseDefaultValue(MemberScope<?, ?> member, String value, ObjectMapper objectMapper) {
+    if (value == null) {
+      return null;
+    }
+    if (member.getType().isInstanceOf(CharSequence.class) || member.getType().isInstanceOf(Enum.class)) {
+      return TextNode.valueOf(value);
+    }
+    try {
+      return objectMapper.readTree(value);
+    } catch (JsonProcessingException e) {
+      log.warn("Ignoring @Default value '{}' on {} — not valid JSON for type {}",
+          value, member.getName(), member.getType());
+      return null;
+    }
+  }
 
   protected abstract Boolean checkNullable(MemberScope<?, ?> member);
 

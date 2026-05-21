@@ -1,5 +1,6 @@
 package io.fabric8.crd.generator.victools.approvaltests.validation;
 
+import io.fabric8.generator.annotation.Default;
 import io.fabric8.generator.annotation.Max;
 import io.fabric8.generator.annotation.Min;
 import io.fabric8.generator.annotation.Pattern;
@@ -26,6 +27,7 @@ public class FkcValidationSpec {
   private ValidationOnString onString;
   private ValidationExclusive onExclusive;
   private ValidationSize onSize;
+  private ValidationOnDefault onDefault;
 
   @Data
   static class ValidationOnInteger {
@@ -140,6 +142,32 @@ public class FkcValidationSpec {
     private String string;
     @Size(min = 1, max = 4)
     private Map<String, String> map;
+  }
+
+  enum Color {
+    RED,
+    GREEN,
+    BLUE
+  }
+
+  @Data
+  static class ValidationOnDefault {
+    @Default("hello")
+    private String defaultString;
+    @Default("5")
+    private int defaultIntPrim;
+    @Default("42")
+    private Integer defaultInteger;
+    @Default("9999999999")
+    private long defaultLong;
+    @Default("true")
+    private boolean defaultBoolean;
+    @Default("1.5")
+    private double defaultDouble;
+    @Default("RED")
+    private Color defaultEnum;
+    @Default("[1,2,3]")
+    private List<Integer> defaultList;
   }
 
 }

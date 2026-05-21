@@ -1,6 +1,5 @@
 package io.fabric8.crd.generator.victools.schema;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.victools.jsonschema.generator.MemberScope;
 import io.fabric8.crd.generator.victools.annotation.Default;
@@ -31,7 +30,7 @@ public class ValidationModule extends AbstractValidationModule {
     }
     return findAnnotationOnFieldAndGetter(member, Default.class)
         .map(Default::value)
-        .map(s -> objectMapper.convertValue(s, JsonNode.class))
+        .map(s -> parseDefaultValue(member, s, objectMapper))
         .orElse(null);
   }
 
