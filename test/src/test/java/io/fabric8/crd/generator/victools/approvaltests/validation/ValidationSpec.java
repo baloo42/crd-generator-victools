@@ -1,9 +1,12 @@
 package io.fabric8.crd.generator.victools.approvaltests.validation;
 
+import io.fabric8.crd.generator.victools.annotation.Default;
 import io.fabric8.crd.generator.victools.annotation.Max;
 import io.fabric8.crd.generator.victools.annotation.Min;
 import io.fabric8.crd.generator.victools.annotation.Pattern;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * Tests for own validation annotations
@@ -20,6 +23,7 @@ public class ValidationSpec {
   private ValidationOnDouble onDouble;
   private ValidationOnDoublePrim onDoublePrim;
   private ValidationOnString onString;
+  private ValidationOnDefault onDefault;
 
   @Data
   static class ValidationOnInteger {
@@ -113,6 +117,32 @@ public class ValidationSpec {
   static class ValidationOnString {
     @Pattern("(a|b)+")
     private String pattern;
+  }
+
+  enum Color {
+    RED,
+    GREEN,
+    BLUE
+  }
+
+  @Data
+  static class ValidationOnDefault {
+    @Default("hello")
+    private String defaultString;
+    @Default("5")
+    private int defaultIntPrim;
+    @Default("42")
+    private Integer defaultInteger;
+    @Default("9999999999")
+    private long defaultLong;
+    @Default("true")
+    private boolean defaultBoolean;
+    @Default("1.5")
+    private double defaultDouble;
+    @Default("RED")
+    private Color defaultEnum;
+    @Default("[1,2,3]")
+    private List<Integer> defaultList;
   }
 
 }

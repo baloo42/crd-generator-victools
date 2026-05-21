@@ -17,6 +17,42 @@ spec:
         properties:
           spec:
             properties:
+              onDefault:
+                properties:
+                  defaultBoolean:
+                    default: true
+                    type: "boolean"
+                  defaultDouble:
+                    default: 1.5
+                    type: "number"
+                  defaultEnum:
+                    default: "RED"
+                    enum:
+                    - "BLUE"
+                    - "GREEN"
+                    - "RED"
+                    type: "string"
+                  defaultIntPrim:
+                    default: 5
+                    type: "integer"
+                  defaultInteger:
+                    default: 42
+                    type: "integer"
+                  defaultList:
+                    default:
+                    - 1
+                    - 2
+                    - 3
+                    items:
+                      type: "integer"
+                    type: "array"
+                  defaultLong:
+                    default: 9999999999
+                    type: "integer"
+                  defaultString:
+                    default: "hello"
+                    type: "string"
+                type: "object"
               onDouble:
                 properties:
                   maximum1:
